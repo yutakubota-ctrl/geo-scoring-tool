@@ -26,11 +26,15 @@ from src.dashboard.styles.common import (
     COLORS,
     PLOTLY_COLORS
 )
+from src.dashboard.components.demo_toggle import render_demo_toggle
 
 st.set_page_config(page_title="トレンド分析 - GEOスコアリング", layout="wide")
 
 # 共通CSSの適用
 st.markdown(get_common_css(), unsafe_allow_html=True)
+
+# デモモードトグル（右上固定）
+render_demo_toggle()
 
 # ページヘッダー
 st.markdown(get_page_header(

@@ -18,6 +18,7 @@ from src.dashboard.styles.common import (
     get_page_header,
     COLORS
 )
+from src.dashboard.components.demo_toggle import render_demo_toggle
 
 # ページ設定
 st.set_page_config(
@@ -29,6 +30,9 @@ st.set_page_config(
 
 # 共通CSSの適用
 st.markdown(get_common_css(), unsafe_allow_html=True)
+
+# デモモードトグル（右上固定）
+render_demo_toggle()
 
 # データベース初期化
 @st.cache_resource

@@ -46,6 +46,49 @@ COLORS = {
     "chart_6": "#EC4899",  # ピンク
 }
 
+# ================================
+# AEOインスパイア カラーパレット
+# https://fde-aeo-strategy.vercel.app/ 準拠
+# ================================
+COLORS_AEO = {
+    # 背景系（ダークモード基調）
+    "background": "#020617",      # Very Dark Slate (メイン背景)
+    "card": "#0f172a",            # Slate 900 (カード背景)
+    "card_elevated": "#1e293b",   # Slate 800 (タイル/ホバー)
+    "border": "#334155",          # Slate 700 (境界線)
+
+    # アクセント（高コントラスト）
+    "accent_primary": "#deff9a",  # Lime Green (主要アクセント)
+    "accent_secondary": "#38bdf8", # Sky Blue (補助アクセント)
+    "accent_tertiary": "#a78bfa",  # Purple (第三アクセント)
+
+    # ステータス
+    "success": "#4ade80",         # Green 400
+    "warning": "#fbbf24",         # Amber 400
+    "error": "#f43f5e",           # Rose 500
+
+    # テキスト（ダークモード用）
+    "text_primary": "#f8fafc",    # Slate 50 (見出し)
+    "text_secondary": "#cbd5e1",  # Slate 400 (本文)
+    "text_muted": "#94a3b8",      # Slate 500 (サブテキスト)
+    "text_accent": "#deff9a",     # Lime (強調テキスト)
+
+    # グラデーション
+    "gradient_glow": "radial-gradient(circle, rgba(222, 255, 154, 0.04), transparent 70%)",
+    "gradient_card": "linear-gradient(135deg, #0f172a 0%, #1e293b 100%)",
+    "gradient_accent": "linear-gradient(90deg, #deff9a 0%, #38bdf8 100%)",
+}
+
+# AEO用 Plotlyカラーパレット
+PLOTLY_COLORS_AEO = [
+    COLORS_AEO["accent_primary"],
+    COLORS_AEO["accent_secondary"],
+    COLORS_AEO["accent_tertiary"],
+    COLORS_AEO["success"],
+    COLORS_AEO["warning"],
+    COLORS_AEO["error"],
+]
+
 # Plotly用カラーパレット
 PLOTLY_COLORS = [
     COLORS["chart_1"],

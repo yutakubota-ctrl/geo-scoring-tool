@@ -30,11 +30,15 @@ from src.dashboard.styles.common import (
     COLORS,
     PLOTLY_COLORS
 )
+from src.dashboard.components.demo_toggle import render_demo_toggle, is_demo_mode_active
 
 st.set_page_config(page_title="ロードマップ - GEOスコアリング", layout="wide", initial_sidebar_state="expanded")
 
 # 共通CSSの適用
 st.markdown(get_common_css(), unsafe_allow_html=True)
+
+# デモモードトグル（右上固定）
+render_demo_toggle()
 
 # ページヘッダー
 st.markdown(get_page_header(
@@ -43,7 +47,7 @@ st.markdown(get_page_header(
 ), unsafe_allow_html=True)
 
 # デモモードの確認
-demo_mode = os.getenv("DEMO_MODE", "true").lower() == "true"
+demo_mode = is_demo_mode_active()
 
 def load_roadmap_data():
     """ロードマップデータを読み込み"""
