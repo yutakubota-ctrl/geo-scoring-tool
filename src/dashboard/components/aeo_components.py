@@ -4,82 +4,40 @@ AEOインスパイア ビジュアルコンポーネント
 AEO戦略資料（https://fde-aeo-strategy.vercel.app/）のデザイン要素を
 GEOスコアリングダッシュボードに適用するためのコンポーネント集。
 
-主な特徴:
+デザインシステム v3.0対応
+- common.pyから統一カラーパレットを使用
 - ダークスレート背景 (#020617)
 - ライムグリーンアクセント (#deff9a)
-- Before/After形式のKPI表示
-- 放射状グローエフェクト
+- ガラスモーフィズム、多層シャドウ
 """
 
 import plotly.graph_objects as go
 from typing import Dict, List, Optional
 
-# ================================
-# AEOカラーパレット
-# ================================
-COLORS_AEO = {
-    # 背景系（ダークモード基調）
-    "background": "#020617",      # Very Dark Slate (メイン背景)
-    "card": "#0f172a",            # Slate 900 (カード背景)
-    "card_elevated": "#1e293b",   # Slate 800 (タイル/ホバー)
-    "border": "#334155",          # Slate 700 (境界線)
-
-    # アクセント（高コントラスト）
-    "accent_primary": "#deff9a",  # Lime Green (主要アクセント)
-    "accent_secondary": "#38bdf8", # Sky Blue (補助アクセント)
-    "accent_tertiary": "#a78bfa",  # Purple (第三アクセント)
-
-    # ステータス
-    "success": "#4ade80",         # Green 400
-    "warning": "#fbbf24",         # Amber 400
-    "error": "#f43f5e",           # Rose 500
-
-    # テキスト（ダークモード用）
-    "text_primary": "#f8fafc",    # Slate 50 (見出し)
-    "text_secondary": "#cbd5e1",  # Slate 400 (本文)
-    "text_muted": "#94a3b8",      # Slate 500 (サブテキスト)
-    "text_accent": "#deff9a",     # Lime (強調テキスト)
-}
-
-# Plotly用カラーパレット
-PLOTLY_COLORS_AEO = [
-    COLORS_AEO["accent_primary"],
-    COLORS_AEO["accent_secondary"],
-    COLORS_AEO["accent_tertiary"],
-    COLORS_AEO["success"],
-    COLORS_AEO["warning"],
-    COLORS_AEO["error"],
-]
+# common.pyから統一カラーパレットをインポート
+from src.dashboard.styles.common import (
+    COLORS,
+    COLORS_AEO,
+    PLOTLY_COLORS,
+    PLOTLY_COLORS_AEO,
+    get_icon,
+    get_plotly_layout
+)
 
 
 # ================================
 # CSS定義
 # ================================
 def get_aeo_css() -> str:
-    """AEOスタイルのCSSを返す"""
+    """AEOスタイルのCSSを返す（common.pyの拡張）"""
     return f'''
 <style>
-    /* ================================
-       AEOカラーパレット CSS変数
-       ================================ */
-    :root {{
-        --aeo-bg-base: {COLORS_AEO["background"]};
-        --aeo-bg-card: {COLORS_AEO["card"]};
-        --aeo-bg-elevated: {COLORS_AEO["card_elevated"]};
-        --aeo-border: {COLORS_AEO["border"]};
-        --aeo-accent: {COLORS_AEO["accent_primary"]};
-        --aeo-accent-secondary: {COLORS_AEO["accent_secondary"]};
-        --aeo-text-primary: {COLORS_AEO["text_primary"]};
-        --aeo-text-secondary: {COLORS_AEO["text_secondary"]};
-        --aeo-text-muted: {COLORS_AEO["text_muted"]};
-    }}
-
     /* ================================
        KPIカード（Before/After形式）
        ================================ */
     .kpi-card-aeo {{
-        background: {COLORS_AEO["card"]};
-        border: 1px solid {COLORS_AEO["border"]};
+        background: {COLORS["card"]};
+        border: 1px solid {COLORS["border"]};
         border-radius: 16px;
         padding: 1.5rem;
         position: relative;
@@ -88,7 +46,7 @@ def get_aeo_css() -> str:
     }}
 
     .kpi-card-aeo:hover {{
-        border-color: {COLORS_AEO["accent_primary"]};
+        border-color: {COLORS["border_accent"]};
         box-shadow: 0 0 20px rgba(222, 255, 154, 0.1);
     }}
 
@@ -102,7 +60,7 @@ def get_aeo_css() -> str:
 
     .kpi-label-aeo {{
         font-size: 0.75rem;
-        color: {COLORS_AEO["text_muted"]};
+        color: {COLORS["text_muted"]};
         margin-bottom: 0.5rem;
         text-transform: uppercase;
         letter-spacing: 0.1em;
@@ -119,21 +77,21 @@ def get_aeo_css() -> str:
     .kpi-before {{
         font-family: 'JetBrains Mono', monospace;
         font-size: 1.25rem;
-        color: {COLORS_AEO["text_muted"]};
+        color: {COLORS["text_muted"]};
         text-decoration: line-through;
         opacity: 0.7;
     }}
 
     .kpi-arrow {{
         font-size: 1rem;
-        color: {COLORS_AEO["text_muted"]};
+        color: {COLORS["text_muted"]};
     }}
 
     .kpi-after {{
         font-family: 'JetBrains Mono', monospace;
         font-size: 2.5rem;
         font-weight: 700;
-        color: {COLORS_AEO["text_primary"]};
+        color: {COLORS["text_primary"]};
     }}
 
     .kpi-delta-aeo {{
@@ -144,16 +102,16 @@ def get_aeo_css() -> str:
     }}
 
     .kpi-delta-positive {{
-        color: {COLORS_AEO["accent_primary"]};
+        color: {COLORS["accent"]};
     }}
 
     .kpi-delta-negative {{
-        color: {COLORS_AEO["error"]};
+        color: {COLORS["danger"]};
     }}
 
     .kpi-progress-bar {{
         height: 6px;
-        background: {COLORS_AEO["card_elevated"]};
+        background: {COLORS["card_elevated"]};
         border-radius: 3px;
         margin-top: 1rem;
         overflow: hidden;
@@ -161,7 +119,7 @@ def get_aeo_css() -> str:
 
     .kpi-progress-fill {{
         height: 100%;
-        background: linear-gradient(90deg, {COLORS_AEO["accent_primary"]}, {COLORS_AEO["accent_secondary"]});
+        background: {COLORS["gradient_accent"]};
         border-radius: 3px;
         transition: width 0.5s ease-out;
     }}
@@ -170,8 +128,8 @@ def get_aeo_css() -> str:
        タイムライン（ガントチャート風）
        ================================ */
     .timeline-container-aeo {{
-        background: {COLORS_AEO["card"]};
-        border: 1px solid {COLORS_AEO["border"]};
+        background: {COLORS["card"]};
+        border: 1px solid {COLORS["border"]};
         border-radius: 16px;
         padding: 1.5rem;
     }}
@@ -192,8 +150,8 @@ def get_aeo_css() -> str:
     }}
 
     .phase-badge {{
-        background: {COLORS_AEO["accent_primary"]};
-        color: {COLORS_AEO["background"]};
+        background: {COLORS["accent"]};
+        color: {COLORS["text_inverse"]};
         padding: 0.25rem 0.75rem;
         border-radius: 9999px;
         font-size: 0.7rem;
@@ -203,7 +161,7 @@ def get_aeo_css() -> str:
     }}
 
     .phase-title {{
-        color: {COLORS_AEO["text_primary"]};
+        color: {COLORS["text_primary"]};
         font-size: 1.125rem;
         font-weight: 600;
     }}
@@ -219,7 +177,7 @@ def get_aeo_css() -> str:
     .month-cell {{
         text-align: center;
         font-size: 0.7rem;
-        color: {COLORS_AEO["text_muted"]};
+        color: {COLORS["text_muted"]};
         padding: 0.25rem 0;
     }}
 
@@ -232,7 +190,7 @@ def get_aeo_css() -> str:
     .task-name {{
         width: 140px;
         font-size: 0.875rem;
-        color: {COLORS_AEO["text_secondary"]};
+        color: {COLORS["text_secondary"]};
         padding-right: 1rem;
         flex-shrink: 0;
         white-space: nowrap;
@@ -243,7 +201,7 @@ def get_aeo_css() -> str:
     .task-bar-container {{
         flex: 1;
         height: 24px;
-        background: {COLORS_AEO["card_elevated"]};
+        background: {COLORS["card_elevated"]};
         border-radius: 4px;
         position: relative;
     }}
@@ -256,16 +214,16 @@ def get_aeo_css() -> str:
     }}
 
     .task-bar.status-completed {{
-        background: linear-gradient(90deg, {COLORS_AEO["success"]}, #22d3ee);
+        background: linear-gradient(90deg, {COLORS["success"]}, #86efac);
     }}
 
     .task-bar.status-in_progress {{
-        background: linear-gradient(90deg, {COLORS_AEO["accent_primary"]}, {COLORS_AEO["accent_secondary"]});
+        background: {COLORS["gradient_accent"]};
         animation: pulse-bar 2s infinite;
     }}
 
     .task-bar.status-pending {{
-        background: {COLORS_AEO["border"]};
+        background: {COLORS["border"]};
     }}
 
     @keyframes pulse-bar {{
@@ -277,8 +235,8 @@ def get_aeo_css() -> str:
        SOVチャートカード
        ================================ */
     .sov-card-aeo {{
-        background: {COLORS_AEO["card"]};
-        border: 1px solid {COLORS_AEO["border"]};
+        background: {COLORS["card"]};
+        border: 1px solid {COLORS["border"]};
         border-radius: 16px;
         padding: 1.5rem;
     }}
@@ -290,12 +248,12 @@ def get_aeo_css() -> str:
     .sov-title {{
         font-size: 1rem;
         font-weight: 600;
-        color: {COLORS_AEO["text_primary"]};
+        color: {COLORS["text_primary"]};
     }}
 
     .sov-subtitle {{
         font-size: 0.875rem;
-        color: {COLORS_AEO["text_muted"]};
+        color: {COLORS["text_muted"]};
         margin-top: 0.25rem;
     }}
 
@@ -305,13 +263,13 @@ def get_aeo_css() -> str:
         gap: 1rem;
         margin-top: 1rem;
         padding-top: 1rem;
-        border-top: 1px solid {COLORS_AEO["border"]};
+        border-top: 1px solid {COLORS["border"]};
     }}
 
     .sov-rank {{
         font-size: 2rem;
         font-weight: 700;
-        color: {COLORS_AEO["accent_primary"]};
+        color: {COLORS["accent"]};
         font-family: 'JetBrains Mono', monospace;
     }}
 
@@ -320,36 +278,19 @@ def get_aeo_css() -> str:
     }}
 
     .sov-change-positive {{
-        color: {COLORS_AEO["success"]};
+        color: {COLORS["success"]};
     }}
 
     .sov-change-negative {{
-        color: {COLORS_AEO["error"]};
-    }}
-
-    /* ================================
-       エンジン別スコアカード
-       ================================ */
-    .engine-scores-card {{
-        background: {COLORS_AEO["card"]};
-        border: 1px solid {COLORS_AEO["border"]};
-        border-radius: 16px;
-        padding: 1.5rem;
-    }}
-
-    .engine-scores-title {{
-        font-size: 1rem;
-        font-weight: 600;
-        color: {COLORS_AEO["text_primary"]};
-        margin-bottom: 1rem;
+        color: {COLORS["danger"]};
     }}
 
     /* ================================
        プロセスステップ（AEOスタイル）
        ================================ */
     .process-step-aeo {{
-        border-left: 4px solid {COLORS_AEO["accent_primary"]};
-        background: rgba(30, 41, 59, 0.8);
+        border-left: 4px solid {COLORS["accent"]};
+        background: {COLORS["card_elevated"]};
         padding: 1.5rem;
         margin-bottom: 1rem;
         border-radius: 0 12px 12px 0;
@@ -364,26 +305,26 @@ def get_aeo_css() -> str:
         transform: translateY(-50%);
         width: 36px;
         height: 36px;
-        background: {COLORS_AEO["accent_primary"]};
+        background: {COLORS["accent"]};
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
         font-size: 1rem;
         font-weight: 700;
-        color: {COLORS_AEO["background"]};
+        color: {COLORS["text_inverse"]};
     }}
 
     .process-step-title {{
         font-size: 1rem;
         font-weight: 600;
-        color: {COLORS_AEO["text_primary"]};
+        color: {COLORS["text_primary"]};
         margin-bottom: 0.5rem;
     }}
 
     .process-step-description {{
         font-size: 0.875rem;
-        color: {COLORS_AEO["text_secondary"]};
+        color: {COLORS["text_secondary"]};
         line-height: 1.6;
     }}
 </style>
@@ -420,6 +361,11 @@ def render_before_after_kpi(
     delta_class = "kpi-delta-positive" if delta >= 0 else "kpi-delta-negative"
     progress_pct = min((after / max_value) * 100, 100)
 
+    # SVGアイコン
+    icon_name = "arrow_up" if delta >= 0 else "arrow_down"
+    icon_color = COLORS["success"] if delta >= 0 else COLORS["danger"]
+    icon_svg = get_icon(icon_name, size=16, color=icon_color)
+
     progress_html = ""
     if show_progress:
         progress_html = f'''
@@ -433,7 +379,7 @@ def render_before_after_kpi(
         <div class="kpi-label-aeo">{label}</div>
         <div class="kpi-before-after">
             <span class="kpi-before">{before:.0f}</span>
-            <span class="kpi-arrow">→</span>
+            <span class="kpi-arrow">{icon_svg}</span>
             <span class="kpi-after">{after:.0f}</span>
         </div>
         <div class="kpi-delta-aeo {delta_class}">
@@ -466,7 +412,7 @@ def render_engine_scores(scores: Dict[str, Dict[str, float]]) -> go.Figure:
 
     # 色の決定（変化に応じて）
     colors = [
-        COLORS_AEO["accent_primary"] if d >= 0 else COLORS_AEO["error"]
+        COLORS["accent"] if d >= 0 else COLORS["danger"]
         for d in deltas
     ]
 
@@ -486,7 +432,7 @@ def render_engine_scores(scores: Dict[str, Dict[str, float]]) -> go.Figure:
               for s, d in zip(current_scores[::-1], deltas[::-1])],
         textposition='inside',
         textfont=dict(
-            color=COLORS_AEO["background"],
+            color=COLORS["text_inverse"],
             size=13,
             family="'JetBrains Mono', monospace"
         ),
@@ -507,38 +453,33 @@ def render_engine_scores(scores: Dict[str, Dict[str, float]]) -> go.Figure:
         marker=dict(
             symbol='line-ns-open',
             size=20,
-            line=dict(width=2, color=COLORS_AEO["text_muted"]),
+            line=dict(width=2, color=COLORS["text_muted"]),
             color='rgba(0,0,0,0)'
         ),
         name='前回',
         hoverinfo='skip'
     ))
 
-    fig.update_layout(
-        paper_bgcolor='rgba(0,0,0,0)',
-        plot_bgcolor='rgba(0,0,0,0)',
-        font=dict(
-            family="'Noto Sans JP', sans-serif",
-            color=COLORS_AEO["text_secondary"]
-        ),
-        height=min(80 + len(engines) * 50, 400),
-        margin=dict(l=100, r=40, t=10, b=40),
-        xaxis=dict(
+    layout = get_plotly_layout("", height=min(80 + len(engines) * 50, 400))
+    layout.update({
+        "margin": dict(l=100, r=40, t=10, b=40),
+        "xaxis": dict(
             range=[0, 100],
             gridcolor='rgba(148, 163, 184, 0.1)',
             zeroline=False,
-            tickfont=dict(size=11, color=COLORS_AEO["text_muted"]),
+            tickfont=dict(size=11, color=COLORS["text_muted"]),
             title=dict(
                 text='スコア',
-                font=dict(size=11, color=COLORS_AEO["text_muted"])
+                font=dict(size=11, color=COLORS["text_muted"])
             )
         ),
-        yaxis=dict(
-            tickfont=dict(size=13, color=COLORS_AEO["text_primary"]),
+        "yaxis": dict(
+            tickfont=dict(size=13, color=COLORS["text_primary"]),
         ),
-        showlegend=False,
-        bargap=0.3
-    )
+        "showlegend": False,
+        "bargap": 0.3
+    })
+    fig.update_layout(**layout)
 
     return fig
 
@@ -572,7 +513,7 @@ def render_sov_chart(
     colors = []
     for i, brand in enumerate(brands):
         if brand == own_brand_key:
-            colors.append(COLORS_AEO["accent_primary"])
+            colors.append(COLORS["accent"])
         else:
             # グレースケールで段階的に薄く
             opacity = max(0.3, 0.8 - i * 0.12)
@@ -582,7 +523,7 @@ def render_sov_chart(
 
     cumulative = 0
     for brand, share, color in zip(brands, shares, colors):
-        text_color = COLORS_AEO["background"] if brand == own_brand_key else COLORS_AEO["text_primary"]
+        text_color = COLORS["text_inverse"] if brand == own_brand_key else COLORS["text_primary"]
 
         fig.add_trace(go.Bar(
             name=brand,
@@ -605,24 +546,23 @@ def render_sov_chart(
         ))
         cumulative += share
 
-    fig.update_layout(
-        barmode='stack',
-        paper_bgcolor='rgba(0,0,0,0)',
-        plot_bgcolor='rgba(0,0,0,0)',
-        height=100,
-        margin=dict(l=20, r=20, t=10, b=10),
-        xaxis=dict(
+    layout = get_plotly_layout("", height=100)
+    layout.update({
+        "barmode": 'stack',
+        "margin": dict(l=20, r=20, t=10, b=10),
+        "xaxis": dict(
             range=[0, 100],
             showgrid=False,
             showticklabels=False,
             zeroline=False
         ),
-        yaxis=dict(
+        "yaxis": dict(
             showticklabels=False
         ),
-        showlegend=False,
-        bargap=0
-    )
+        "showlegend": False,
+        "bargap": 0
+    })
+    fig.update_layout(**layout)
 
     return fig
 
@@ -713,6 +653,9 @@ def render_sov_card(
     """
     change_sign = "+" if change >= 0 else ""
     change_class = "sov-change-positive" if change >= 0 else "sov-change-negative"
+    icon_name = "arrow_up" if change >= 0 else "arrow_down"
+    icon_color = COLORS["success"] if change >= 0 else COLORS["danger"]
+    icon_svg = get_icon(icon_name, size=14, color=icon_color)
 
     return f'''
     <div class="sov-card-aeo">
@@ -724,7 +667,7 @@ def render_sov_card(
         <div class="sov-position">
             <div class="sov-rank">#{rank}</div>
             <div class="sov-change {change_class}">
-                {change_sign}{change}% vs 前月
+                {icon_svg} {change_sign}{change}% vs 前月
             </div>
         </div>
     </div>
@@ -732,50 +675,8 @@ def render_sov_card(
 
 
 def get_plotly_layout_aeo(title: str = "", height: int = 400) -> dict:
-    """AEOスタイルのPlotlyレイアウト設定を返す"""
-    return {
-        "title": {
-            "text": title,
-            "font": {
-                "family": "'Noto Sans JP', sans-serif",
-                "size": 14,
-                "color": COLORS_AEO["text_primary"]
-            },
-            "x": 0,
-            "xanchor": "left"
-        },
-        "font": {
-            "family": "'Noto Sans JP', sans-serif",
-            "color": COLORS_AEO["text_secondary"]
-        },
-        "paper_bgcolor": "rgba(0,0,0,0)",
-        "plot_bgcolor": "rgba(0,0,0,0)",
-        "height": height,
-        "margin": {"l": 40, "r": 20, "t": 60, "b": 40},
-        "xaxis": {
-            "gridcolor": "rgba(148, 163, 184, 0.1)",
-            "zerolinecolor": "rgba(148, 163, 184, 0.2)",
-            "title_font": {"size": 11, "color": COLORS_AEO["text_muted"]},
-            "tickfont": {"size": 11, "color": COLORS_AEO["text_muted"]}
-        },
-        "yaxis": {
-            "gridcolor": "rgba(148, 163, 184, 0.1)",
-            "zerolinecolor": "rgba(148, 163, 184, 0.2)",
-            "title_font": {"size": 11, "color": COLORS_AEO["text_muted"]},
-            "tickfont": {"size": 11, "color": COLORS_AEO["text_muted"]}
-        },
-        "legend": {
-            "font": {"size": 11, "color": COLORS_AEO["text_secondary"]},
-            "bgcolor": "rgba(15, 23, 42, 0.8)",
-            "bordercolor": COLORS_AEO["border"],
-            "borderwidth": 1
-        },
-        "hoverlabel": {
-            "bgcolor": COLORS_AEO["card"],
-            "bordercolor": COLORS_AEO["border"],
-            "font": {"family": "'Noto Sans JP', sans-serif", "size": 12, "color": COLORS_AEO["text_primary"]}
-        }
-    }
+    """AEOスタイルのPlotlyレイアウト設定を返す（common.pyの関数を使用）"""
+    return get_plotly_layout(title, height)
 
 
 # ================================

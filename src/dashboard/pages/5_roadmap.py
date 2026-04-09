@@ -6,7 +6,7 @@ Impact x Effort マトリクスで優先度を可視化
 - タスクリスト（優先度P0/P1/P2別）
 - ステータス別フィルタ
 
-デザインシステム v2.1適用
+デザインシステム v3.0 - AEO Premium Dark Theme
 """
 import streamlit as st
 import plotly.graph_objects as go
@@ -27,12 +27,13 @@ from src.dashboard.styles.common import (
     get_page_header,
     get_page_footer,
     get_plotly_layout,
+    get_icon,
     COLORS,
     PLOTLY_COLORS
 )
 from src.dashboard.components.demo_toggle import render_demo_toggle, is_demo_mode_active
 
-st.set_page_config(page_title="ロードマップ - GEOスコアリング", layout="wide", initial_sidebar_state="expanded")
+st.set_page_config(page_title="ロードマップ - GEOスコアリング", page_icon=None, layout="wide", initial_sidebar_state="expanded")
 
 # 共通CSSの適用
 st.markdown(get_common_css(), unsafe_allow_html=True)
@@ -76,15 +77,27 @@ if roadmap_data:
     with col1:
         st.markdown(f"""
         <div style="
-            background: linear-gradient(135deg, {COLORS['primary']} 0%, #1E40AF 100%);
-            border-radius: 16px;
+            background: {COLORS['card']};
+            border: 1px solid {COLORS['border_accent']};
+            border-radius: 20px;
             padding: 1.5rem;
-            color: white;
             text-align: center;
+            position: relative;
+            overflow: hidden;
         ">
-            <div style="font-size: 0.875rem; opacity: 0.8;">総タスク数</div>
-            <div style="font-size: 2.5rem; font-weight: 700; font-family: 'JetBrains Mono', monospace; margin: 0.25rem 0;">
-                {summary.get('total_tasks', 0)}
+            <div style="
+                position: absolute;
+                inset: 0;
+                background: radial-gradient(circle at top right, rgba(222, 255, 154, 0.06), transparent 70%);
+            "></div>
+            <div style="position: relative; z-index: 1;">
+                <div style="color: {COLORS['accent']}; margin-bottom: 0.5rem;">
+                    {get_icon('layers', size=24, color=COLORS['accent'])}
+                </div>
+                <div style="font-size: 0.875rem; color: {COLORS['text_muted']};">総タスク数</div>
+                <div style="font-size: 2.5rem; font-weight: 700; font-family: 'JetBrains Mono', monospace; color: {COLORS['text_primary']}; margin: 0.25rem 0;">
+                    {summary.get('total_tasks', 0)}
+                </div>
             </div>
         </div>
         """, unsafe_allow_html=True)
@@ -92,12 +105,15 @@ if roadmap_data:
     with col2:
         st.markdown(f"""
         <div style="
-            background: linear-gradient(135deg, {COLORS['danger']} 0%, #F87171 100%);
-            border-radius: 16px;
+            background: linear-gradient(135deg, {COLORS['danger']} 0%, #fca5a5 100%);
+            border-radius: 20px;
             padding: 1.5rem;
             color: white;
             text-align: center;
         ">
+            <div style="margin-bottom: 0.5rem;">
+                {get_icon('alert_triangle', size=24, color='white')}
+            </div>
             <div style="font-size: 0.875rem; opacity: 0.9;">P0（最優先）</div>
             <div style="font-size: 2.5rem; font-weight: 700; font-family: 'JetBrains Mono', monospace; margin: 0.25rem 0;">
                 {summary.get('p0_count', 0)}
@@ -108,12 +124,15 @@ if roadmap_data:
     with col3:
         st.markdown(f"""
         <div style="
-            background: linear-gradient(135deg, {COLORS['secondary']} 0%, #60A5FA 100%);
-            border-radius: 16px;
+            background: linear-gradient(135deg, {COLORS['accent_secondary']} 0%, #7dd3fc 100%);
+            border-radius: 20px;
             padding: 1.5rem;
             color: white;
             text-align: center;
         ">
+            <div style="margin-bottom: 0.5rem;">
+                {get_icon('activity', size=24, color='white')}
+            </div>
             <div style="font-size: 0.875rem; opacity: 0.9;">進行中</div>
             <div style="font-size: 2.5rem; font-weight: 700; font-family: 'JetBrains Mono', monospace; margin: 0.25rem 0;">
                 {summary.get('status_breakdown', {}).get('In_Progress', 0)}
@@ -124,12 +143,15 @@ if roadmap_data:
     with col4:
         st.markdown(f"""
         <div style="
-            background: linear-gradient(135deg, {COLORS['accent']} 0%, #34D399 100%);
-            border-radius: 16px;
+            background: linear-gradient(135deg, {COLORS['success']} 0%, #86efac 100%);
+            border-radius: 20px;
             padding: 1.5rem;
             color: white;
             text-align: center;
         ">
+            <div style="margin-bottom: 0.5rem;">
+                {get_icon('check_circle', size=24, color='white')}
+            </div>
             <div style="font-size: 0.875rem; opacity: 0.9;">完了済み</div>
             <div style="font-size: 2.5rem; font-weight: 700; font-family: 'JetBrains Mono', monospace; margin: 0.25rem 0;">
                 {summary.get('status_breakdown', {}).get('Done', 0)}
@@ -145,14 +167,18 @@ if roadmap_data:
     with tab1:
         st.markdown(f"""
         <div style="
-            background: white;
-            border-radius: 16px;
+            background: {COLORS['card']};
+            border: 1px solid {COLORS['border']};
+            border-radius: 20px;
             padding: 2rem;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-            border: 1px solid rgba(0,0,0,0.05);
         ">
             <div style="margin-bottom: 1rem;">
-                <span style="font-size: 1.25rem; font-weight: 600; color: {COLORS['text_primary']};">Impact x Effort マトリクス</span>
+                <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem;">
+                    <div style="color: {COLORS['accent']};">
+                        {get_icon('target', size=20, color=COLORS['accent'])}
+                    </div>
+                    <span style="font-size: 1.25rem; font-weight: 600; color: {COLORS['text_primary']};">Impact x Effort マトリクス</span>
+                </div>
                 <p style="font-size: 0.875rem; color: {COLORS['text_secondary']}; margin-top: 0.25rem;">
                     右上（高Impact・低Effort）のタスクを優先的に実施
                 </p>
@@ -166,7 +192,7 @@ if roadmap_data:
         priority_config = {
             'P0': {'color': COLORS['danger'], 'size': 24, 'name': 'P0 最優先'},
             'P1': {'color': COLORS['warning'], 'size': 20, 'name': 'P1 重要'},
-            'P2': {'color': COLORS['secondary'], 'size': 16, 'name': 'P2 通常'}
+            'P2': {'color': COLORS['accent_secondary'], 'size': 16, 'name': 'P2 通常'}
         }
 
         fig = go.Figure()
@@ -182,7 +208,7 @@ if roadmap_data:
                 marker=dict(
                     size=priority_config[priority]['size'],
                     color=priority_config[priority]['color'],
-                    line=dict(width=2, color='white'),
+                    line=dict(width=2, color=COLORS['card']),
                     opacity=0.9
                 ),
                 text=df_filtered['task_id'].str.replace('task_', 'T'),
@@ -198,25 +224,25 @@ if roadmap_data:
 
         # 象限の背景色
         fig.add_shape(type="rect", x0=0, y0=5, x1=5, y1=10.5,
-                      fillcolor="rgba(16, 185, 129, 0.08)", line=dict(width=0))
+                      fillcolor="rgba(74, 222, 128, 0.08)", line=dict(width=0))
         fig.add_shape(type="rect", x0=5, y0=5, x1=10.5, y1=10.5,
-                      fillcolor="rgba(245, 158, 11, 0.08)", line=dict(width=0))
+                      fillcolor="rgba(251, 191, 36, 0.08)", line=dict(width=0))
         fig.add_shape(type="rect", x0=0, y0=0, x1=5, y1=5,
-                      fillcolor="rgba(59, 130, 246, 0.08)", line=dict(width=0))
+                      fillcolor="rgba(56, 189, 248, 0.08)", line=dict(width=0))
         fig.add_shape(type="rect", x0=5, y0=0, x1=10.5, y1=5,
-                      fillcolor="rgba(239, 68, 68, 0.08)", line=dict(width=0))
+                      fillcolor="rgba(244, 63, 94, 0.08)", line=dict(width=0))
 
         # 中心線
         fig.add_shape(type="line", x0=5, y0=0, x1=5, y1=10.5,
-                      line=dict(color=COLORS['text_muted'], width=1, dash="dot"))
+                      line=dict(color=COLORS['border'], width=1, dash="dot"))
         fig.add_shape(type="line", x0=0, y0=5, x1=10.5, y1=5,
-                      line=dict(color=COLORS['text_muted'], width=1, dash="dot"))
+                      line=dict(color=COLORS['border'], width=1, dash="dot"))
 
         # 象限ラベル
         annotations = [
-            dict(x=2.5, y=9.5, text="Quick Wins", font=dict(size=12, color=COLORS['accent']), showarrow=False),
+            dict(x=2.5, y=9.5, text="Quick Wins", font=dict(size=12, color=COLORS['success']), showarrow=False),
             dict(x=7.5, y=9.5, text="Strategic", font=dict(size=12, color=COLORS['warning']), showarrow=False),
-            dict(x=2.5, y=1.5, text="Fill-ins", font=dict(size=12, color=COLORS['secondary']), showarrow=False),
+            dict(x=2.5, y=1.5, text="Fill-ins", font=dict(size=12, color=COLORS['accent_secondary']), showarrow=False),
             dict(x=7.5, y=1.5, text="Time Sinks", font=dict(size=12, color=COLORS['danger']), showarrow=False),
         ]
 
@@ -226,14 +252,14 @@ if roadmap_data:
                 title="Effort (実装難易度)",
                 range=[0, 10.5],
                 dtick=2,
-                gridcolor='rgba(0,0,0,0.05)',
+                gridcolor='rgba(148, 163, 184, 0.1)',
                 title_font=dict(size=12, color=COLORS['text_secondary'])
             ),
             "yaxis": dict(
                 title="Impact (インパクト)",
                 range=[0, 10.5],
                 dtick=2,
-                gridcolor='rgba(0,0,0,0.05)',
+                gridcolor='rgba(148, 163, 184, 0.1)',
                 title_font=dict(size=12, color=COLORS['text_secondary'])
             ),
             "margin": dict(l=60, r=20, t=20, b=60),
@@ -242,7 +268,9 @@ if roadmap_data:
                 yanchor="bottom",
                 y=-0.15,
                 xanchor="center",
-                x=0.5
+                x=0.5,
+                font=dict(color=COLORS['text_secondary']),
+                bgcolor='rgba(0,0,0,0)'
             ),
             "annotations": annotations
         })
@@ -255,14 +283,18 @@ if roadmap_data:
     with tab2:
         st.markdown(f"""
         <div style="
-            background: white;
-            border-radius: 16px;
+            background: {COLORS['card']};
+            border: 1px solid {COLORS['border']};
+            border-radius: 20px;
             padding: 2rem;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-            border: 1px solid rgba(0,0,0,0.05);
         ">
             <div style="margin-bottom: 1.5rem;">
-                <span style="font-size: 1.25rem; font-weight: 600; color: {COLORS['text_primary']};">タスクリスト</span>
+                <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem;">
+                    <div style="color: {COLORS['accent_secondary']};">
+                        {get_icon('data', size=20, color=COLORS['accent_secondary'])}
+                    </div>
+                    <span style="font-size: 1.25rem; font-weight: 600; color: {COLORS['text_primary']};">タスクリスト</span>
+                </div>
             </div>
         """, unsafe_allow_html=True)
 
@@ -303,7 +335,7 @@ if roadmap_data:
 
         st.markdown(f"""
         <div style="font-size: 0.875rem; color: {COLORS['text_secondary']}; margin-bottom: 1rem;">
-            該当タスク: <strong>{len(filtered_tasks)}件</strong>
+            該当タスク: <strong style="color: {COLORS['text_primary']};">{len(filtered_tasks)}件</strong>
         </div>
         """, unsafe_allow_html=True)
 
@@ -313,26 +345,27 @@ if roadmap_data:
             priority_colors = {
                 'P0': COLORS['danger'],
                 'P1': COLORS['warning'],
-                'P2': COLORS['secondary']
+                'P2': COLORS['accent_secondary']
             }
             priority_color = priority_colors.get(task['priority'], COLORS['text_muted'])
 
             # ステータスバッジの色と日本語
             status_config = {
                 'Pending': {'color': COLORS['text_muted'], 'label': '未着手'},
-                'In_Progress': {'color': COLORS['secondary'], 'label': '進行中'},
-                'Done': {'color': COLORS['accent'], 'label': '完了'}
+                'In_Progress': {'color': COLORS['accent_secondary'], 'label': '進行中'},
+                'Done': {'color': COLORS['success'], 'label': '完了'}
             }
             status_info = status_config.get(task['status'], {'color': COLORS['text_muted'], 'label': task['status']})
 
             st.markdown(f"""
             <div style="
-                background: {COLORS['bg_primary']};
+                background: {COLORS['card_elevated']};
                 border-left: 4px solid {priority_color};
                 border-radius: 8px;
                 padding: 1rem 1.25rem;
                 margin-bottom: 0.75rem;
-                transition: box-shadow 0.2s ease;
+                border: 1px solid {COLORS['border']};
+                transition: all 0.2s ease;
             ">
                 <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem;">
                     <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
@@ -384,11 +417,10 @@ if roadmap_data:
         with col_stat1:
             st.markdown(f"""
             <div style="
-                background: white;
-                border-radius: 16px;
+                background: {COLORS['card']};
+                border: 1px solid {COLORS['border']};
+                border-radius: 20px;
                 padding: 1.5rem;
-                box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-                border: 1px solid rgba(0,0,0,0.05);
                 height: 100%;
             ">
                 <div style="font-size: 1rem; font-weight: 600; color: {COLORS['text_primary']}; margin-bottom: 1rem;">
@@ -401,7 +433,7 @@ if roadmap_data:
                     x=['P0 最優先', 'P1 重要', 'P2 通常'],
                     y=[summary.get('p0_count', 0), summary.get('p1_count', 0), summary.get('p2_count', 0)],
                     marker=dict(
-                        color=[COLORS['danger'], COLORS['warning'], COLORS['secondary']],
+                        color=[COLORS['danger'], COLORS['warning'], COLORS['accent_secondary']],
                         cornerradius=8
                     ),
                     text=[summary.get('p0_count', 0), summary.get('p1_count', 0), summary.get('p2_count', 0)],
@@ -424,11 +456,10 @@ if roadmap_data:
         with col_stat2:
             st.markdown(f"""
             <div style="
-                background: white;
-                border-radius: 16px;
+                background: {COLORS['card']};
+                border: 1px solid {COLORS['border']};
+                border-radius: 20px;
                 padding: 1.5rem;
-                box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-                border: 1px solid rgba(0,0,0,0.05);
                 height: 100%;
             ">
                 <div style="font-size: 1rem; font-weight: 600; color: {COLORS['text_primary']}; margin-bottom: 1rem;">
@@ -447,10 +478,10 @@ if roadmap_data:
                         status_breakdown.get('Done', 0)
                     ],
                     marker=dict(
-                        colors=[COLORS['text_muted'], COLORS['secondary'], COLORS['accent']]
+                        colors=[COLORS['text_muted'], COLORS['accent_secondary'], COLORS['success']]
                     ),
                     textinfo='label+percent',
-                    textfont=dict(size=12),
+                    textfont=dict(size=12, color=COLORS['text_primary']),
                     hole=0.4,
                     hovertemplate='<b>%{label}</b><br>タスク数: %{value}<br>割合: %{percent}<extra></extra>'
                 )
@@ -472,30 +503,31 @@ if roadmap_data:
 
         st.markdown(f"""
         <div style="
-            background: white;
-            border-radius: 16px;
+            background: {COLORS['card']};
+            border: 1px solid {COLORS['border']};
+            border-radius: 20px;
             padding: 1.5rem;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-            border: 1px solid rgba(0,0,0,0.05);
         ">
             <div style="font-size: 1rem; font-weight: 600; color: {COLORS['text_primary']}; margin-bottom: 1rem;">
                 平均スコア
             </div>
             <div style="display: flex; gap: 2rem;">
                 <div style="
-                    background: {COLORS['bg_primary']};
+                    background: {COLORS['card_elevated']};
+                    border: 1px solid {COLORS['border']};
                     border-radius: 12px;
                     padding: 1rem 1.5rem;
                     flex: 1;
                     text-align: center;
                 ">
                     <div style="font-size: 0.875rem; color: {COLORS['text_secondary']};">平均インパクト</div>
-                    <div style="font-size: 1.75rem; font-weight: 700; color: {COLORS['accent']}; font-family: 'JetBrains Mono', monospace;">
+                    <div style="font-size: 1.75rem; font-weight: 700; color: {COLORS['success']}; font-family: 'JetBrains Mono', monospace;">
                         {summary.get('avg_impact', 0):.1f}<span style="font-size: 1rem; opacity: 0.7;">/10</span>
                     </div>
                 </div>
                 <div style="
-                    background: {COLORS['bg_primary']};
+                    background: {COLORS['card_elevated']};
+                    border: 1px solid {COLORS['border']};
                     border-radius: 12px;
                     padding: 1rem 1.5rem;
                     flex: 1;
@@ -513,14 +545,24 @@ if roadmap_data:
 else:
     st.markdown(f"""
     <div style="
-        background: white;
-        border-radius: 16px;
+        background: {COLORS['card']};
+        border: 1px solid {COLORS['border']};
+        border-radius: 20px;
         padding: 3rem;
         text-align: center;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-        border: 1px solid rgba(0,0,0,0.05);
     ">
-        <div style="font-size: 4rem; margin-bottom: 1rem;">🗺</div>
+        <div style="
+            width: 80px;
+            height: 80px;
+            background: {COLORS['card_elevated']};
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+        ">
+            {get_icon('map', size=40, color=COLORS['text_muted'])}
+        </div>
         <div style="font-size: 1.25rem; font-weight: 600; color: {COLORS['text_primary']}; margin-bottom: 0.5rem;">
             ロードマップデータが見つかりません
         </div>
@@ -528,12 +570,13 @@ else:
             デモモードを有効化するか、データを取得してください
         </div>
         <div style="
-            background: {COLORS['bg_primary']};
+            background: {COLORS['card_elevated']};
+            border: 1px solid {COLORS['border']};
             border-radius: 8px;
             padding: 1rem;
             display: inline-block;
         ">
-            <code style="color: {COLORS['secondary']};">DEMO_MODE=true</code>
+            <code style="color: {COLORS['accent']};">DEMO_MODE=true</code>
         </div>
     </div>
     """, unsafe_allow_html=True)

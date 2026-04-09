@@ -2,7 +2,7 @@
 サマリー画面（経営向け）
 総合スコア、前回比較、アラートを表示
 
-デザインシステム v2.1適用
+デザインシステム v3.0 - AEO Premium Dark Theme
 """
 import streamlit as st
 import plotly.express as px
@@ -25,12 +25,14 @@ from src.dashboard.styles.common import (
     get_section_divider,
     get_page_footer,
     get_plotly_layout,
+    get_alert_card,
+    get_icon,
     COLORS,
     PLOTLY_COLORS
 )
 from src.dashboard.components.demo_toggle import render_demo_toggle
 
-st.set_page_config(page_title="サマリー - GEOスコアリング", layout="wide")
+st.set_page_config(page_title="サマリー - GEOスコアリング", page_icon=None, layout="wide")
 
 # 共通CSSの適用
 st.markdown(get_common_css(), unsafe_allow_html=True)
@@ -57,9 +59,14 @@ with db.get_session() as session:
         # ================================
         # KPIカード セクション
         # ================================
-        st.markdown("""
-        <div style="margin-bottom: 0.5rem;">
-            <span style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: #64748B;">
+        st.markdown(f"""
+        <div style="margin-bottom: 0.75rem;">
+            <span style="
+                font-size: 0.7rem;
+                text-transform: uppercase;
+                letter-spacing: 0.1em;
+                color: {COLORS['text_muted']};
+            ">
                 主要指標
             </span>
         </div>
@@ -72,38 +79,74 @@ with db.get_session() as session:
         sentiment_value = avg_scores['sentiment']
 
         with col1:
-            # 総合スコア（メインカード）
+            # 総合スコア（プレミアムカード）
             st.markdown(f"""
             <div style="
-                background: linear-gradient(135deg, {COLORS['primary']} 0%, #1E40AF 100%);
-                border-radius: 16px;
-                padding: 1.5rem;
-                color: white;
+                background: {COLORS['card']};
+                border: 1px solid {COLORS['border_accent']};
+                border-radius: 20px;
+                padding: 1.75rem;
                 position: relative;
                 overflow: hidden;
             ">
-                <div style="position: relative; z-index: 1;">
-                    <div style="font-size: 0.875rem; opacity: 0.8; margin-bottom: 0.25rem;">総合スコア</div>
-                    <div style="font-size: 3rem; font-weight: 700; font-family: 'JetBrains Mono', monospace;">
-                        {current_total}<span style="font-size: 1.5rem; opacity: 0.7;">/100</span>
-                    </div>
-                    <div style="font-size: 0.875rem; margin-top: 0.5rem;">
-                        <span style="
-                            background: rgba(16, 185, 129, 0.3);
-                            padding: 0.2rem 0.5rem;
-                            border-radius: 4px;
-                        ">+5pt vs 先週</span>
-                    </div>
-                </div>
+                <!-- グローエフェクト -->
                 <div style="
                     position: absolute;
-                    right: -20px;
-                    top: -20px;
-                    width: 100px;
-                    height: 100px;
-                    background: rgba(255,255,255,0.1);
-                    border-radius: 50%;
+                    right: -30px;
+                    top: -30px;
+                    width: 120px;
+                    height: 120px;
+                    background: radial-gradient(circle, rgba(222, 255, 154, 0.12), transparent 70%);
+                    pointer-events: none;
                 "></div>
+                <div style="position: relative; z-index: 1;">
+                    <div style="
+                        display: flex;
+                        align-items: center;
+                        gap: 0.5rem;
+                        margin-bottom: 0.5rem;
+                    ">
+                        <div style="color: {COLORS['accent']};">
+                            {get_icon('layers', size=18, color=COLORS['accent'])}
+                        </div>
+                        <span style="
+                            font-size: 0.75rem;
+                            text-transform: uppercase;
+                            letter-spacing: 0.1em;
+                            color: {COLORS['text_muted']};
+                        ">総合スコア</span>
+                    </div>
+                    <div style="
+                        font-size: 3.5rem;
+                        font-weight: 700;
+                        font-family: 'JetBrains Mono', monospace;
+                        background: {COLORS['gradient_accent']};
+                        -webkit-background-clip: text;
+                        -webkit-text-fill-color: transparent;
+                        line-height: 1;
+                    ">
+                        {current_total}<span style="
+                            font-size: 1.5rem;
+                            -webkit-text-fill-color: {COLORS['text_muted']};
+                        ">/100</span>
+                    </div>
+                    <div style="
+                        display: inline-flex;
+                        align-items: center;
+                        gap: 0.25rem;
+                        margin-top: 0.75rem;
+                        padding: 0.25rem 0.75rem;
+                        background: rgba(74, 222, 128, 0.15);
+                        border: 1px solid rgba(74, 222, 128, 0.3);
+                        border-radius: 9999px;
+                        font-size: 0.8rem;
+                        font-weight: 600;
+                        color: {COLORS['success']};
+                    ">
+                        {get_icon('arrow_up', size=14, color=COLORS['success'])}
+                        +5pt vs 先週
+                    </div>
+                </div>
             </div>
             """, unsafe_allow_html=True)
 
@@ -111,20 +154,52 @@ with db.get_session() as session:
             # 認知率
             st.markdown(f"""
             <div style="
-                background: white;
-                border-radius: 16px;
-                padding: 1.5rem;
-                box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-                border: 1px solid rgba(0,0,0,0.05);
+                background: {COLORS['card']};
+                border: 1px solid {COLORS['border']};
+                border-radius: 20px;
+                padding: 1.75rem;
                 height: 100%;
-            ">
-                <div style="font-size: 0.875rem; color: {COLORS['text_secondary']}; margin-bottom: 0.25rem;">認知率</div>
-                <div style="font-size: 2.5rem; font-weight: 700; color: {COLORS['secondary']}; font-family: 'JetBrains Mono', monospace;">
+                transition: all 0.3s ease;
+            " class="kpi-card">
+                <div style="
+                    display: flex;
+                    align-items: center;
+                    gap: 0.5rem;
+                    margin-bottom: 0.5rem;
+                ">
+                    <div style="color: {COLORS['accent_secondary']};">
+                        {get_icon('eye', size=18, color=COLORS['accent_secondary'])}
+                    </div>
+                    <span style="
+                        font-size: 0.75rem;
+                        text-transform: uppercase;
+                        letter-spacing: 0.1em;
+                        color: {COLORS['text_muted']};
+                    ">認知率</span>
+                </div>
+                <div style="
+                    font-size: 2.5rem;
+                    font-weight: 700;
+                    color: {COLORS['accent_secondary']};
+                    font-family: 'JetBrains Mono', monospace;
+                    line-height: 1.1;
+                ">
                     {visibility_rate:.0f}%
                 </div>
-                <div style="margin-top: 0.75rem;">
-                    <div style="height: 8px; background: {COLORS['bg_primary']}; border-radius: 4px; overflow: hidden;">
-                        <div style="height: 100%; width: {visibility_rate}%; background: linear-gradient(90deg, {COLORS['secondary']}, #60A5FA); border-radius: 4px;"></div>
+                <div style="margin-top: 1rem;">
+                    <div style="
+                        height: 6px;
+                        background: {COLORS['card_elevated']};
+                        border-radius: 3px;
+                        overflow: hidden;
+                    ">
+                        <div style="
+                            height: 100%;
+                            width: {visibility_rate}%;
+                            background: linear-gradient(90deg, {COLORS['accent_secondary']}, #60a5fa);
+                            border-radius: 3px;
+                            transition: width 0.6s ease;
+                        "></div>
                     </div>
                 </div>
             </div>
@@ -132,22 +207,48 @@ with db.get_session() as session:
 
         with col3:
             # 推奨度
-            sentiment_color = COLORS['accent'] if sentiment_value >= 0 else COLORS['danger']
+            sentiment_color = COLORS['success'] if sentiment_value >= 0 else COLORS['danger']
             sentiment_sign = "+" if sentiment_value >= 0 else ""
+            sentiment_icon = "arrow_up" if sentiment_value >= 0 else "arrow_down"
             st.markdown(f"""
             <div style="
-                background: white;
-                border-radius: 16px;
-                padding: 1.5rem;
-                box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-                border: 1px solid rgba(0,0,0,0.05);
+                background: {COLORS['card']};
+                border: 1px solid {COLORS['border']};
+                border-radius: 20px;
+                padding: 1.75rem;
                 height: 100%;
-            ">
-                <div style="font-size: 0.875rem; color: {COLORS['text_secondary']}; margin-bottom: 0.25rem;">推奨度</div>
-                <div style="font-size: 2.5rem; font-weight: 700; color: {sentiment_color}; font-family: 'JetBrains Mono', monospace;">
+                transition: all 0.3s ease;
+            " class="kpi-card">
+                <div style="
+                    display: flex;
+                    align-items: center;
+                    gap: 0.5rem;
+                    margin-bottom: 0.5rem;
+                ">
+                    <div style="color: {sentiment_color};">
+                        {get_icon('message', size=18, color=sentiment_color)}
+                    </div>
+                    <span style="
+                        font-size: 0.75rem;
+                        text-transform: uppercase;
+                        letter-spacing: 0.1em;
+                        color: {COLORS['text_muted']};
+                    ">推奨度</span>
+                </div>
+                <div style="
+                    font-size: 2.5rem;
+                    font-weight: 700;
+                    color: {sentiment_color};
+                    font-family: 'JetBrains Mono', monospace;
+                    line-height: 1.1;
+                ">
                     {sentiment_sign}{sentiment_value:.0f}pt
                 </div>
-                <div style="font-size: 0.875rem; color: {COLORS['text_muted']}; margin-top: 0.5rem;">
+                <div style="
+                    font-size: 0.8rem;
+                    color: {COLORS['text_muted']};
+                    margin-top: 0.75rem;
+                ">
                     範囲: -10 ~ +30
                 </div>
             </div>
@@ -157,19 +258,48 @@ with db.get_session() as session:
             # 30日平均
             st.markdown(f"""
             <div style="
-                background: white;
-                border-radius: 16px;
-                padding: 1.5rem;
-                box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-                border: 1px solid rgba(0,0,0,0.05);
+                background: {COLORS['card']};
+                border: 1px solid {COLORS['border']};
+                border-radius: 20px;
+                padding: 1.75rem;
                 height: 100%;
-            ">
-                <div style="font-size: 0.875rem; color: {COLORS['text_secondary']}; margin-bottom: 0.25rem;">30日平均</div>
-                <div style="font-size: 2.5rem; font-weight: 700; color: {COLORS['text_primary']}; font-family: 'JetBrains Mono', monospace;">
+                transition: all 0.3s ease;
+            " class="kpi-card">
+                <div style="
+                    display: flex;
+                    align-items: center;
+                    gap: 0.5rem;
+                    margin-bottom: 0.5rem;
+                ">
+                    <div style="color: {COLORS['accent']};">
+                        {get_icon('activity', size=18, color=COLORS['accent'])}
+                    </div>
+                    <span style="
+                        font-size: 0.75rem;
+                        text-transform: uppercase;
+                        letter-spacing: 0.1em;
+                        color: {COLORS['text_muted']};
+                    ">30日平均</span>
+                </div>
+                <div style="
+                    font-size: 2.5rem;
+                    font-weight: 700;
+                    color: {COLORS['text_primary']};
+                    font-family: 'JetBrains Mono', monospace;
+                    line-height: 1.1;
+                ">
                     {avg_scores['total']:.1f}
                 </div>
-                <div style="font-size: 0.875rem; color: {COLORS['accent']}; margin-top: 0.5rem;">
-                    ↗ 安定上昇中
+                <div style="
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 0.25rem;
+                    font-size: 0.8rem;
+                    color: {COLORS['success']};
+                    margin-top: 0.75rem;
+                ">
+                    {get_icon('trend', size=14, color=COLORS['success'])}
+                    安定上昇中
                 </div>
             </div>
             """, unsafe_allow_html=True)
@@ -182,16 +312,29 @@ with db.get_session() as session:
         # ================================
         st.markdown(f"""
         <div style="
-            background: white;
-            border-radius: 16px;
+            background: {COLORS['card']};
+            border: 1px solid {COLORS['border']};
+            border-radius: 20px;
             padding: 1.5rem;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-            border: 1px solid rgba(0,0,0,0.05);
             margin-bottom: 1.5rem;
         ">
-            <div style="margin-bottom: 1rem;">
+            <div style="
+                display: flex;
+                align-items: center;
+                gap: 0.75rem;
+                margin-bottom: 1rem;
+            ">
+                <div style="color: {COLORS['accent_secondary']};">
+                    {get_icon('trend', size=20, color=COLORS['accent_secondary'])}
+                </div>
                 <span style="font-size: 1.125rem; font-weight: 600; color: {COLORS['text_primary']};">スコア推移</span>
-                <span style="font-size: 0.875rem; color: {COLORS['text_muted']}; margin-left: 0.5rem;">過去90日</span>
+                <span style="
+                    background: {COLORS['card_elevated']};
+                    padding: 0.25rem 0.75rem;
+                    border-radius: 9999px;
+                    font-size: 0.75rem;
+                    color: {COLORS['text_muted']};
+                ">過去90日</span>
             </div>
         """, unsafe_allow_html=True)
 
@@ -209,9 +352,9 @@ with db.get_session() as session:
                 y=df["total"],
                 mode='lines',
                 name='総合スコア',
-                line=dict(color=COLORS['secondary'], width=3),
+                line=dict(color=COLORS['accent'], width=3),
                 fill='tozeroy',
-                fillcolor=f"rgba(59, 130, 246, 0.1)",
+                fillcolor=f"rgba(222, 255, 154, 0.1)",
                 hovertemplate='<b>%{x}</b><br>スコア: %{y:.1f}<extra></extra>'
             ))
 
@@ -221,7 +364,7 @@ with db.get_session() as session:
                 "xaxis_title": "",
                 "yaxis_title": "スコア",
                 "yaxis_range": [0, 100],
-                "margin": {"l": 40, "r": 20, "t": 20, "b": 40},
+                "margin": {"l": 50, "r": 20, "t": 20, "b": 40},
             })
             fig.update_layout(**layout)
 
@@ -239,14 +382,21 @@ with db.get_session() as session:
         with col_left:
             st.markdown(f"""
             <div style="
-                background: white;
-                border-radius: 16px;
+                background: {COLORS['card']};
+                border: 1px solid {COLORS['border']};
+                border-radius: 20px;
                 padding: 1.5rem;
-                box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-                border: 1px solid rgba(0,0,0,0.05);
                 height: 100%;
             ">
-                <div style="margin-bottom: 1rem;">
+                <div style="
+                    display: flex;
+                    align-items: center;
+                    gap: 0.75rem;
+                    margin-bottom: 1rem;
+                ">
+                    <div style="color: {COLORS['accent_tertiary']};">
+                        {get_icon('chart', size=20, color=COLORS['accent_tertiary'])}
+                    </div>
                     <span style="font-size: 1.125rem; font-weight: 600; color: {COLORS['text_primary']};">競合ランキング</span>
                 </div>
             """, unsafe_allow_html=True)
@@ -268,8 +418,9 @@ with db.get_session() as session:
             # 横棒グラフで表示
             fig_ranking = go.Figure()
 
-            colors = [COLORS['secondary'] if d['is_own'] else '#CBD5E1' for d in ranking_data]
-            labels = [f"{'★ ' if d['is_own'] else ''}{d['brand']}" for d in ranking_data]
+            colors = [COLORS['accent'] if d['is_own'] else COLORS['border'] for d in ranking_data]
+            text_colors = [COLORS['text_inverse'] if d['is_own'] else COLORS['text_primary'] for d in ranking_data]
+            labels = [f"{'*' if d['is_own'] else ''}{d['brand']}" for d in ranking_data]
 
             fig_ranking.add_trace(go.Bar(
                 y=labels[::-1],
@@ -277,11 +428,12 @@ with db.get_session() as session:
                 orientation='h',
                 marker=dict(
                     color=colors[::-1],
-                    cornerradius=8
+                    cornerradius=8,
+                    line=dict(width=0)
                 ),
                 text=[f"{d['score']:.1f}" for d in ranking_data][::-1],
                 textposition='inside',
-                textfont=dict(color='white', size=14, family="JetBrains Mono"),
+                textfont=dict(color=[COLORS['text_inverse'] if d['is_own'] else COLORS['text_primary'] for d in ranking_data][::-1], size=13, family="'JetBrains Mono', monospace"),
                 hovertemplate='<b>%{y}</b><br>スコア: %{x:.1f}<extra></extra>'
             ))
 
@@ -301,14 +453,21 @@ with db.get_session() as session:
         with col_right:
             st.markdown(f"""
             <div style="
-                background: white;
-                border-radius: 16px;
+                background: {COLORS['card']};
+                border: 1px solid {COLORS['border']};
+                border-radius: 20px;
                 padding: 1.5rem;
-                box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-                border: 1px solid rgba(0,0,0,0.05);
                 height: 100%;
             ">
-                <div style="margin-bottom: 1rem;">
+                <div style="
+                    display: flex;
+                    align-items: center;
+                    gap: 0.75rem;
+                    margin-bottom: 1rem;
+                ">
+                    <div style="color: {COLORS['warning']};">
+                        {get_icon('alert_triangle', size=20, color=COLORS['warning'])}
+                    </div>
                     <span style="font-size: 1.125rem; font-weight: 600; color: {COLORS['text_primary']};">アラート</span>
                 </div>
             """, unsafe_allow_html=True)
@@ -327,36 +486,29 @@ with db.get_session() as session:
 
             if alerts:
                 for alert_type, title, description in alerts:
-                    bg_color = "rgba(239, 68, 68, 0.1)" if alert_type == "danger" else "rgba(245, 158, 11, 0.1)"
-                    border_color = COLORS['danger'] if alert_type == "danger" else COLORS['warning']
-                    icon = "⚠" if alert_type == "danger" else "⚡"
-                    st.markdown(f"""
-                    <div style="
-                        background: {bg_color};
-                        border-left: 4px solid {border_color};
-                        border-radius: 8px;
-                        padding: 1rem;
-                        margin-bottom: 0.75rem;
-                    ">
-                        <div style="font-size: 0.875rem; font-weight: 600; color: {border_color};">
-                            {icon} {title}
-                        </div>
-                        <div style="font-size: 0.8rem; color: {COLORS['text_secondary']}; margin-top: 0.25rem;">
-                            {description}
-                        </div>
-                    </div>
-                    """, unsafe_allow_html=True)
+                    st.markdown(get_alert_card(title, description, alert_type), unsafe_allow_html=True)
             else:
                 st.markdown(f"""
                 <div style="
-                    background: rgba(16, 185, 129, 0.1);
-                    border-left: 4px solid {COLORS['accent']};
-                    border-radius: 8px;
-                    padding: 1rem;
+                    background: rgba(74, 222, 128, 0.1);
+                    border: 1px solid rgba(74, 222, 128, 0.3);
+                    border-radius: 12px;
+                    padding: 1.5rem;
                     text-align: center;
                 ">
-                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">✅</div>
-                    <div style="font-size: 0.875rem; font-weight: 600; color: {COLORS['accent']};">
+                    <div style="
+                        width: 48px;
+                        height: 48px;
+                        background: linear-gradient(135deg, {COLORS['success']} 0%, #86efac 100%);
+                        border-radius: 12px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        margin: 0 auto 0.75rem;
+                    ">
+                        {get_icon('check_circle', size=24, color=COLORS['text_inverse'])}
+                    </div>
+                    <div style="font-size: 1rem; font-weight: 600; color: {COLORS['success']};">
                         全て正常です
                     </div>
                     <div style="font-size: 0.8rem; color: {COLORS['text_secondary']}; margin-top: 0.25rem;">

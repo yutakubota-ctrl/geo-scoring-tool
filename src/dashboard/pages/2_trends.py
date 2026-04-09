@@ -2,7 +2,7 @@
 トレンド・競合比較画面（マーケター向け）
 時系列分析と競合比較を表示
 
-デザインシステム v2.1適用
+デザインシステム v3.0 - AEO Premium Dark Theme
 """
 import streamlit as st
 import plotly.express as px
@@ -23,12 +23,13 @@ from src.dashboard.styles.common import (
     get_page_header,
     get_page_footer,
     get_plotly_layout,
+    get_icon,
     COLORS,
     PLOTLY_COLORS
 )
 from src.dashboard.components.demo_toggle import render_demo_toggle
 
-st.set_page_config(page_title="トレンド分析 - GEOスコアリング", layout="wide")
+st.set_page_config(page_title="トレンド分析 - GEOスコアリング", page_icon=None, layout="wide")
 
 # 共通CSSの適用
 st.markdown(get_common_css(), unsafe_allow_html=True)
@@ -47,15 +48,29 @@ st.markdown(get_page_header(
 # ================================
 st.markdown(f"""
 <div style="
-    background: white;
-    border-radius: 12px;
+    background: {COLORS['card']};
+    border: 1px solid {COLORS['border']};
+    border-radius: 16px;
     padding: 1rem 1.5rem;
     margin-bottom: 1.5rem;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-    border: 1px solid rgba(0,0,0,0.05);
 ">
-    <div style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: {COLORS['text_muted']}; margin-bottom: 0.75rem;">
-        フィルター設定
+    <div style="
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 0.75rem;
+    ">
+        <div style="color: {COLORS['accent_secondary']};">
+            {get_icon('layers', size=16, color=COLORS['accent_secondary'])}
+        </div>
+        <span style="
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: {COLORS['text_muted']};
+        ">
+            フィルター設定
+        </span>
     </div>
 </div>
 """, unsafe_allow_html=True)
@@ -108,17 +123,35 @@ with db.get_session() as session:
         with col_chart1:
             st.markdown(f"""
             <div style="
-                background: white;
-                border-radius: 16px;
+                background: {COLORS['card']};
+                border: 1px solid {COLORS['border']};
+                border-radius: 20px;
                 padding: 1.5rem;
-                box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-                border: 1px solid rgba(0,0,0,0.05);
                 height: 100%;
+                position: relative;
+                overflow: hidden;
             ">
-                <div style="font-size: 1.125rem; font-weight: 600; color: {COLORS['text_primary']}; margin-bottom: 0.5rem;">
-                    4指標レーダーチャート
+                <div style="
+                    position: absolute;
+                    inset: 0;
+                    background: radial-gradient(circle at center, rgba(222, 255, 154, 0.03), transparent 70%);
+                "></div>
+                <div style="
+                    display: flex;
+                    align-items: center;
+                    gap: 0.75rem;
+                    margin-bottom: 0.5rem;
+                    position: relative;
+                    z-index: 1;
+                ">
+                    <div style="color: {COLORS['accent']};">
+                        {get_icon('target', size=20, color=COLORS['accent'])}
+                    </div>
+                    <span style="font-size: 1.125rem; font-weight: 600; color: {COLORS['text_primary']};">
+                        4指標レーダーチャート
+                    </span>
                 </div>
-                <div style="font-size: 0.875rem; color: {COLORS['text_secondary']}; margin-bottom: 1rem;">
+                <div style="font-size: 0.875rem; color: {COLORS['text_secondary']}; margin-bottom: 1rem; position: relative; z-index: 1;">
                     各指標の達成率を100%基準で比較
                 </div>
             """, unsafe_allow_html=True)
@@ -128,13 +161,22 @@ with db.get_session() as session:
             fig_radar = go.Figure()
 
             for i, item in enumerate(radar_data):
+                color = PLOTLY_COLORS[i % len(PLOTLY_COLORS)]
+                # 色をRGBに分解
+                if color.startswith('#'):
+                    r = int(color[1:3], 16)
+                    g = int(color[3:5], 16)
+                    b = int(color[5:7], 16)
+                else:
+                    r, g, b = 222, 255, 154  # デフォルト
+
                 fig_radar.add_trace(go.Scatterpolar(
                     r=[item["認知"], item["推奨度"], item["ポジション"], item["正確性"], item["認知"]],
                     theta=categories + [categories[0]],
                     fill='toself',
                     name=item["ブランド"],
-                    line=dict(color=PLOTLY_COLORS[i % len(PLOTLY_COLORS)], width=2),
-                    fillcolor=f"rgba({int(PLOTLY_COLORS[i % len(PLOTLY_COLORS)][1:3], 16)}, {int(PLOTLY_COLORS[i % len(PLOTLY_COLORS)][3:5], 16)}, {int(PLOTLY_COLORS[i % len(PLOTLY_COLORS)][5:7], 16)}, 0.15)"
+                    line=dict(color=color, width=2),
+                    fillcolor=f"rgba({r}, {g}, {b}, 0.15)"
                 ))
 
             fig_radar.update_layout(
@@ -143,11 +185,11 @@ with db.get_session() as session:
                         visible=True,
                         range=[0, 100],
                         tickfont=dict(size=10, color=COLORS['text_muted']),
-                        gridcolor='rgba(0,0,0,0.05)'
+                        gridcolor='rgba(148, 163, 184, 0.15)'
                     ),
                     angularaxis=dict(
                         tickfont=dict(size=12, color=COLORS['text_primary']),
-                        gridcolor='rgba(0,0,0,0.05)'
+                        gridcolor='rgba(148, 163, 184, 0.15)'
                     ),
                     bgcolor='rgba(0,0,0,0)'
                 ),
@@ -158,7 +200,8 @@ with db.get_session() as session:
                     y=-0.15,
                     xanchor="center",
                     x=0.5,
-                    font=dict(size=11)
+                    font=dict(size=11, color=COLORS['text_secondary']),
+                    bgcolor='rgba(0,0,0,0)'
                 ),
                 height=400,
                 margin=dict(l=60, r=60, t=40, b=60),
@@ -172,15 +215,24 @@ with db.get_session() as session:
         with col_chart2:
             st.markdown(f"""
             <div style="
-                background: white;
-                border-radius: 16px;
+                background: {COLORS['card']};
+                border: 1px solid {COLORS['border']};
+                border-radius: 20px;
                 padding: 1.5rem;
-                box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-                border: 1px solid rgba(0,0,0,0.05);
                 height: 100%;
             ">
-                <div style="font-size: 1.125rem; font-weight: 600; color: {COLORS['text_primary']}; margin-bottom: 0.5rem;">
-                    指標別達成率（自社）
+                <div style="
+                    display: flex;
+                    align-items: center;
+                    gap: 0.75rem;
+                    margin-bottom: 0.5rem;
+                ">
+                    <div style="color: {COLORS['accent_secondary']};">
+                        {get_icon('chart', size=20, color=COLORS['accent_secondary'])}
+                    </div>
+                    <span style="font-size: 1.125rem; font-weight: 600; color: {COLORS['text_primary']};">
+                        指標別達成率（自社）
+                    </span>
                 </div>
                 <div style="font-size: 0.875rem; color: {COLORS['text_secondary']}; margin-bottom: 1rem;">
                     各指標の目標達成度を棒グラフで表示
@@ -198,8 +250,13 @@ with db.get_session() as session:
                     "正確性": (avg['accuracy'] / 40) * 100
                 }
 
-                # 色を指標ごとに設定
-                bar_colors = [COLORS['secondary'], COLORS['accent'], COLORS['warning'], '#8B5CF6']
+                # 色を指標ごとに設定（グラデーションカラー）
+                bar_colors = [
+                    COLORS['accent_secondary'],
+                    COLORS['success'],
+                    COLORS['warning'],
+                    COLORS['accent_tertiary']
+                ]
 
                 fig_bar = go.Figure()
 
@@ -208,18 +265,19 @@ with db.get_session() as session:
                     y=list(metrics.values()),
                     marker=dict(
                         color=bar_colors,
-                        cornerradius=8
+                        cornerradius=8,
+                        line=dict(width=0)
                     ),
                     text=[f"{v:.0f}%" for v in metrics.values()],
                     textposition='outside',
-                    textfont=dict(size=14, color=COLORS['text_primary'], family="JetBrains Mono"),
+                    textfont=dict(size=14, color=COLORS['text_primary'], family="'JetBrains Mono', monospace"),
                     hovertemplate='<b>%{x}</b><br>達成率: %{y:.1f}%<extra></extra>'
                 ))
 
                 layout_bar = get_plotly_layout("", height=350)
                 layout_bar.update({
                     "yaxis_range": [0, 120],
-                    "margin": {"l": 40, "r": 20, "t": 20, "b": 40},
+                    "margin": {"l": 50, "r": 20, "t": 20, "b": 40},
                     "xaxis_title": "",
                     "yaxis_title": "達成率 (%)",
                 })
@@ -236,15 +294,24 @@ with db.get_session() as session:
 
         st.markdown(f"""
         <div style="
-            background: white;
-            border-radius: 16px;
+            background: {COLORS['card']};
+            border: 1px solid {COLORS['border']};
+            border-radius: 20px;
             padding: 1.5rem;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-            border: 1px solid rgba(0,0,0,0.05);
             margin-bottom: 1.5rem;
         ">
-            <div style="font-size: 1.125rem; font-weight: 600; color: {COLORS['text_primary']}; margin-bottom: 1rem;">
-                競合比較表
+            <div style="
+                display: flex;
+                align-items: center;
+                gap: 0.75rem;
+                margin-bottom: 1rem;
+            ">
+                <div style="color: {COLORS['accent_tertiary']};">
+                    {get_icon('data', size=20, color=COLORS['accent_tertiary'])}
+                </div>
+                <span style="font-size: 1.125rem; font-weight: 600; color: {COLORS['text_primary']};">
+                    競合比較表
+                </span>
             </div>
         """, unsafe_allow_html=True)
 
@@ -254,7 +321,7 @@ with db.get_session() as session:
         # カスタムスタイリング
         def highlight_max(s):
             is_max = s == s.max()
-            return ['background-color: rgba(16, 185, 129, 0.2); font-weight: 600;' if v else '' for v in is_max]
+            return [f'background-color: rgba(222, 255, 154, 0.2); color: {COLORS["accent"]}; font-weight: 600;' if v else '' for v in is_max]
 
         styled_df = comparison_df.style.format("{:.1f}%").apply(highlight_max)
 
@@ -271,14 +338,23 @@ with db.get_session() as session:
         # ================================
         st.markdown(f"""
         <div style="
-            background: white;
-            border-radius: 16px;
+            background: {COLORS['card']};
+            border: 1px solid {COLORS['border']};
+            border-radius: 20px;
             padding: 1.5rem;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-            border: 1px solid rgba(0,0,0,0.05);
         ">
-            <div style="font-size: 1.125rem; font-weight: 600; color: {COLORS['text_primary']}; margin-bottom: 0.5rem;">
-                スコア推移比較
+            <div style="
+                display: flex;
+                align-items: center;
+                gap: 0.75rem;
+                margin-bottom: 0.5rem;
+            ">
+                <div style="color: {COLORS['success']};">
+                    {get_icon('trend', size=20, color=COLORS['success'])}
+                </div>
+                <span style="font-size: 1.125rem; font-weight: 600; color: {COLORS['text_primary']};">
+                    スコア推移比較
+                </span>
             </div>
             <div style="font-size: 0.875rem; color: {COLORS['text_secondary']}; margin-bottom: 1rem;">
                 選択したブランドの総合スコアを時系列で比較
@@ -322,7 +398,9 @@ with db.get_session() as session:
                     yanchor="bottom",
                     y=-0.2,
                     xanchor="center",
-                    x=0.5
+                    x=0.5,
+                    font=dict(color=COLORS['text_secondary']),
+                    bgcolor='rgba(0,0,0,0)'
                 )
             })
             fig_trend.update_layout(**layout_trend)

@@ -2,7 +2,7 @@
 生データ分析画面（実務担当者向け）
 個別回答の確認とエクスポート
 
-デザインシステム v2.1適用
+デザインシステム v3.0 - AEO Premium Dark Theme
 """
 import streamlit as st
 import pandas as pd
@@ -22,11 +22,12 @@ from src.dashboard.styles.common import (
     get_common_css,
     get_page_header,
     get_page_footer,
+    get_icon,
     COLORS
 )
 from src.dashboard.components.demo_toggle import render_demo_toggle
 
-st.set_page_config(page_title="生データ分析 - GEOスコアリング", layout="wide")
+st.set_page_config(page_title="生データ分析 - GEOスコアリング", page_icon=None, layout="wide")
 
 # 共通CSSの適用
 st.markdown(get_common_css(), unsafe_allow_html=True)
@@ -45,15 +46,29 @@ st.markdown(get_page_header(
 # ================================
 st.markdown(f"""
 <div style="
-    background: white;
-    border-radius: 12px;
+    background: {COLORS['card']};
+    border: 1px solid {COLORS['border']};
+    border-radius: 16px;
     padding: 1.5rem;
     margin-bottom: 1.5rem;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-    border: 1px solid rgba(0,0,0,0.05);
 ">
-    <div style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: {COLORS['text_muted']}; margin-bottom: 1rem;">
-        フィルター設定
+    <div style="
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+    ">
+        <div style="color: {COLORS['accent_secondary']};">
+            {get_icon('layers', size=16, color=COLORS['accent_secondary'])}
+        </div>
+        <span style="
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: {COLORS['text_muted']};
+        ">
+            フィルター設定
+        </span>
     </div>
 """, unsafe_allow_html=True)
 
@@ -136,23 +151,24 @@ with db.get_session() as session:
         # データテーブル表示
         st.markdown(f"""
         <div style="
-            background: white;
-            border-radius: 16px;
+            background: {COLORS['card']};
+            border: 1px solid {COLORS['border']};
+            border-radius: 20px;
             padding: 1.5rem;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-            border: 1px solid rgba(0,0,0,0.05);
             margin-bottom: 1.5rem;
         ">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-                <div>
+                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                    <div style="color: {COLORS['accent']};">
+                        {get_icon('data', size=20, color=COLORS['accent'])}
+                    </div>
                     <span style="font-size: 1.125rem; font-weight: 600; color: {COLORS['text_primary']};">回答データ一覧</span>
                     <span style="
-                        background: {COLORS['bg_primary']};
+                        background: {COLORS['card_elevated']};
                         color: {COLORS['text_secondary']};
                         padding: 0.25rem 0.75rem;
                         border-radius: 9999px;
                         font-size: 0.75rem;
-                        margin-left: 0.5rem;
                     ">{len(results)}件</span>
                 </div>
             </div>
@@ -201,15 +217,24 @@ with db.get_session() as session:
         # ================================
         st.markdown(f"""
         <div style="
-            background: white;
-            border-radius: 12px;
+            background: {COLORS['card']};
+            border: 1px solid {COLORS['border']};
+            border-radius: 16px;
             padding: 1rem 1.5rem;
             margin-bottom: 1.5rem;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-            border: 1px solid rgba(0,0,0,0.05);
         ">
-            <div style="font-size: 0.875rem; font-weight: 600; color: {COLORS['text_primary']}; margin-bottom: 0.75rem;">
-                データエクスポート
+            <div style="
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                margin-bottom: 0.75rem;
+            ">
+                <div style="color: {COLORS['accent_secondary']};">
+                    {get_icon('layers', size=16, color=COLORS['accent_secondary'])}
+                </div>
+                <span style="font-size: 0.875rem; font-weight: 600; color: {COLORS['text_primary']};">
+                    データエクスポート
+                </span>
             </div>
         """, unsafe_allow_html=True)
 
@@ -247,14 +272,21 @@ with db.get_session() as session:
         # ================================
         st.markdown(f"""
         <div style="
-            background: white;
-            border-radius: 16px;
+            background: {COLORS['card']};
+            border: 1px solid {COLORS['border']};
+            border-radius: 20px;
             padding: 1.5rem;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-            border: 1px solid rgba(0,0,0,0.05);
         ">
-            <div style="font-size: 1.125rem; font-weight: 600; color: {COLORS['text_primary']}; margin-bottom: 1rem;">
-                詳細表示
+            <div style="
+                display: flex;
+                align-items: center;
+                gap: 0.75rem;
+                margin-bottom: 1rem;
+            ">
+                <div style="color: {COLORS['accent_tertiary']};">
+                    {get_icon('eye', size=20, color=COLORS['accent_tertiary'])}
+                </div>
+                <span style="font-size: 1.125rem; font-weight: 600; color: {COLORS['text_primary']};">詳細表示</span>
             </div>
         """, unsafe_allow_html=True)
 
@@ -275,7 +307,8 @@ with db.get_session() as session:
                 with col_detail1:
                     st.markdown(f"""
                     <div style="
-                        background: {COLORS['bg_primary']};
+                        background: {COLORS['card_elevated']};
+                        border: 1px solid {COLORS['border']};
                         border-radius: 12px;
                         padding: 1rem;
                         margin-bottom: 1rem;
@@ -297,7 +330,8 @@ with db.get_session() as session:
                 with col_detail2:
                     st.markdown(f"""
                     <div style="
-                        background: {COLORS['bg_primary']};
+                        background: {COLORS['card_elevated']};
+                        border: 1px solid {COLORS['border']};
                         border-radius: 12px;
                         padding: 1rem;
                         margin-bottom: 1rem;
@@ -310,10 +344,10 @@ with db.get_session() as session:
 
                     # スコアバー（カスタムHTML）
                     scores = [
-                        ("認知", selected_result.visibility_score or 0, 10, COLORS['secondary']),
-                        ("推奨度", (selected_result.sentiment_score or 0) + 10, 40, COLORS['accent']),
+                        ("認知", selected_result.visibility_score or 0, 10, COLORS['accent_secondary']),
+                        ("推奨度", (selected_result.sentiment_score or 0) + 10, 40, COLORS['success']),
                         ("ポジション", selected_result.positioning_score or 0, 20, COLORS['warning']),
-                        ("正確性", selected_result.accuracy_score or 0, 40, '#8B5CF6'),
+                        ("正確性", selected_result.accuracy_score or 0, 40, COLORS['accent_tertiary']),
                     ]
 
                     for name, value, max_val, color in scores:
@@ -326,7 +360,7 @@ with db.get_session() as session:
                                     {value if name != '推奨度' else value - 10}/{max_val if name != '推奨度' else '30'}
                                 </span>
                             </div>
-                            <div style="height: 8px; background: {COLORS['bg_primary']}; border-radius: 4px; overflow: hidden;">
+                            <div style="height: 8px; background: {COLORS['card_elevated']}; border-radius: 4px; overflow: hidden;">
                                 <div style="height: 100%; width: {percentage}%; background: {color}; border-radius: 4px; transition: width 0.3s ease;"></div>
                             </div>
                         </div>
@@ -353,7 +387,8 @@ with db.get_session() as session:
                         for key, value in detail.items():
                             st.markdown(f"""
                             <div style="
-                                background: {COLORS['bg_primary']};
+                                background: {COLORS['card_elevated']};
+                                border: 1px solid {COLORS['border']};
                                 border-radius: 8px;
                                 padding: 0.75rem 1rem;
                                 margin-bottom: 0.5rem;
@@ -382,14 +417,24 @@ with db.get_session() as session:
     else:
         st.markdown(f"""
         <div style="
-            background: white;
-            border-radius: 16px;
+            background: {COLORS['card']};
+            border: 1px solid {COLORS['border']};
+            border-radius: 20px;
             padding: 3rem;
             text-align: center;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-            border: 1px solid rgba(0,0,0,0.05);
         ">
-            <div style="font-size: 3rem; margin-bottom: 1rem;">📭</div>
+            <div style="
+                width: 64px;
+                height: 64px;
+                background: {COLORS['card_elevated']};
+                border-radius: 16px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin: 0 auto 1rem;
+            ">
+                {get_icon('data', size=32, color=COLORS['text_muted'])}
+            </div>
             <div style="font-size: 1.125rem; font-weight: 600; color: {COLORS['text_primary']}; margin-bottom: 0.5rem;">
                 データが見つかりません
             </div>

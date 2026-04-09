@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1,
+    "name": "HubSpot",
+    "is_own": true,
+    "created_at": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": 2,
+    "name": "Marketo",
+    "is_own": false,
+    "created_at": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": 3,
+    "name": "Salesforce",
+    "is_own": false,
+    "created_at": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": 4,
+    "name": "Pardot",
+    "is_own": false,
+    "created_at": "2026-01-01T00:00:00Z"
+  }
+]

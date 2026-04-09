@@ -6,7 +6,7 @@ ChatGPT o1の7ステップ推論プロセスを可視化
 - 参照URL一覧
 - ブランド評価カード
 
-デザインシステム v2.1適用
+デザインシステム v3.0 - AEO Premium Dark Theme
 """
 import streamlit as st
 import plotly.graph_objects as go
@@ -25,11 +25,12 @@ from src.dashboard.styles.common import (
     get_page_header,
     get_page_footer,
     get_timeline_step,
+    get_icon,
     COLORS
 )
 from src.dashboard.components.demo_toggle import render_demo_toggle, is_demo_mode_active
 
-st.set_page_config(page_title="思考ログ - GEOスコアリング", layout="wide", initial_sidebar_state="expanded")
+st.set_page_config(page_title="思考ログ - GEOスコアリング", page_icon=None, layout="wide", initial_sidebar_state="expanded")
 
 # 共通CSSの適用
 st.markdown(get_common_css(), unsafe_allow_html=True)
@@ -67,35 +68,55 @@ if thought_log:
     # ================================
     st.markdown(f"""
     <div style="
-        background: linear-gradient(135deg, {COLORS['primary']} 0%, #1E40AF 100%);
-        border-radius: 16px;
+        background: {COLORS['card']};
+        border: 1px solid {COLORS['border_accent']};
+        border-radius: 20px;
         padding: 1.5rem 2rem;
         margin-bottom: 2rem;
-        color: white;
+        position: relative;
+        overflow: hidden;
     ">
-        <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem;">
+        <div style="
+            position: absolute;
+            right: -50px;
+            top: -50px;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(222, 255, 154, 0.08), transparent 70%);
+        "></div>
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem; position: relative; z-index: 1;">
             <div style="flex: 1; min-width: 300px;">
-                <div style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; opacity: 0.7; margin-bottom: 0.5rem;">
-                    検索クエリ
+                <div style="
+                    display: flex;
+                    align-items: center;
+                    gap: 0.5rem;
+                    margin-bottom: 0.5rem;
+                ">
+                    <div style="color: {COLORS['accent']};">
+                        {get_icon('activity', size=16, color=COLORS['accent'])}
+                    </div>
+                    <span style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em; color: {COLORS['text_muted']};">
+                        検索クエリ
+                    </span>
                 </div>
-                <div style="font-size: 1.5rem; font-weight: 600;">
+                <div style="font-size: 1.5rem; font-weight: 600; color: {COLORS['text_primary']};">
                     {thought_log['query_text']}
                 </div>
             </div>
             <div style="display: flex; gap: 2rem;">
                 <div>
-                    <div style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; opacity: 0.7; margin-bottom: 0.25rem;">
+                    <div style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em; color: {COLORS['text_muted']}; margin-bottom: 0.25rem;">
                         モデル
                     </div>
-                    <div style="font-size: 1rem; font-weight: 500;">
+                    <div style="font-size: 1rem; font-weight: 500; color: {COLORS['text_primary']};">
                         {thought_log['llm_model']}
                     </div>
                 </div>
                 <div>
-                    <div style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; opacity: 0.7; margin-bottom: 0.25rem;">
+                    <div style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em; color: {COLORS['text_muted']}; margin-bottom: 0.25rem;">
                         実行日時
                     </div>
-                    <div style="font-size: 1rem; font-weight: 500;">
+                    <div style="font-size: 1rem; font-weight: 500; color: {COLORS['text_primary']};">
                         {datetime.fromisoformat(thought_log['executed_at']).strftime('%Y-%m-%d %H:%M')}
                     </div>
                 </div>
@@ -110,14 +131,18 @@ if thought_log:
     with tab1:
         st.markdown(f"""
         <div style="
-            background: white;
-            border-radius: 16px;
+            background: {COLORS['card']};
+            border: 1px solid {COLORS['border']};
+            border-radius: 20px;
             padding: 2rem;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-            border: 1px solid rgba(0,0,0,0.05);
         ">
             <div style="margin-bottom: 1.5rem;">
-                <span style="font-size: 1.25rem; font-weight: 600; color: {COLORS['text_primary']};">推論プロセスタイムライン</span>
+                <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem;">
+                    <div style="color: {COLORS['accent']};">
+                        {get_icon('brain', size=20, color=COLORS['accent'])}
+                    </div>
+                    <span style="font-size: 1.25rem; font-weight: 600; color: {COLORS['text_primary']};">推論プロセスタイムライン</span>
+                </div>
                 <p style="font-size: 0.875rem; color: {COLORS['text_secondary']}; margin-top: 0.25rem;">
                     AIが最終判断に至るまでの思考の流れを段階的に表示します
                 </p>
@@ -136,9 +161,9 @@ if thought_log:
                 # 信頼度の色を決定
                 confidence = step.get('confidence', 0)
                 if confidence >= 0.9:
-                    conf_color = COLORS['accent']
+                    conf_color = COLORS['success']
                 elif confidence >= 0.8:
-                    conf_color = COLORS['secondary']
+                    conf_color = COLORS['accent_secondary']
                 elif confidence >= 0.7:
                     conf_color = COLORS['warning']
                 else:
@@ -152,21 +177,22 @@ if thought_log:
                             width: 48px;
                             height: 48px;
                             border-radius: 50%;
-                            background: linear-gradient(135deg, {COLORS['primary']} 0%, #1E40AF 100%);
+                            background: {COLORS['gradient_accent']};
                             display: flex;
                             align-items: center;
                             justify-content: center;
-                            color: white;
+                            color: {COLORS['text_inverse']};
                             font-family: 'JetBrains Mono', monospace;
                             font-weight: 700;
                             font-size: 1.125rem;
                             flex-shrink: 0;
                         ">{i}</div>
-                        {'<div style="width: 2px; height: 80px; background: linear-gradient(to bottom, ' + COLORS['secondary'] + ', rgba(59, 130, 246, 0.2)); margin: 0.5rem 0;"></div>' if not is_last else ''}
+                        {'<div style="width: 2px; height: 80px; background: linear-gradient(to bottom, ' + COLORS['accent'] + ', rgba(222, 255, 154, 0.2)); margin: 0.5rem 0;"></div>' if not is_last else ''}
                     </div>
                     <div style="
                         flex: 1;
-                        background: {COLORS['bg_primary']};
+                        background: {COLORS['card_elevated']};
+                        border: 1px solid {COLORS['border']};
                         border-radius: 12px;
                         padding: 1.25rem;
                         margin-bottom: {'1rem' if not is_last else '0'};
@@ -195,22 +221,22 @@ if thought_log:
                 # 参照URLがあれば表示
                 if 'urls' in step and step['urls']:
                     st.markdown(f"""
-                        <div style="margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid rgba(0,0,0,0.05);">
+                        <div style="margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid {COLORS['border']};">
                             <div style="font-size: 0.75rem; color: {COLORS['text_muted']}; margin-bottom: 0.5rem;">参照した情報源:</div>
                     """, unsafe_allow_html=True)
                     for url in step['urls']:
                         st.markdown(f"""
                             <a href="{url}" target="_blank" style="
                                 display: inline-block;
-                                background: white;
+                                background: {COLORS['card']};
                                 padding: 0.25rem 0.75rem;
                                 border-radius: 6px;
                                 font-size: 0.75rem;
-                                color: {COLORS['secondary']};
+                                color: {COLORS['accent_secondary']};
                                 text-decoration: none;
                                 margin-right: 0.5rem;
                                 margin-bottom: 0.25rem;
-                                border: 1px solid rgba(59, 130, 246, 0.2);
+                                border: 1px solid {COLORS['border']};
                             ">{url[:50]}...</a>
                         """, unsafe_allow_html=True)
                     st.markdown("</div>", unsafe_allow_html=True)
@@ -222,14 +248,17 @@ if thought_log:
         <div style="
             margin-top: 2rem;
             padding-top: 1.5rem;
-            border-top: 2px solid {COLORS['secondary']};
+            border-top: 2px solid {COLORS['accent']};
         ">
-            <div style="font-size: 1.125rem; font-weight: 600; color: {COLORS['text_primary']}; margin-bottom: 1rem;">
-                最終判断
+            <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
+                <div style="color: {COLORS['accent']};">
+                    {get_icon('check_circle', size=20, color=COLORS['accent'])}
+                </div>
+                <span style="font-size: 1.125rem; font-weight: 600; color: {COLORS['text_primary']};">最終判断</span>
             </div>
             <div style="
-                background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(16, 185, 129, 0.1) 100%);
-                border-left: 4px solid {COLORS['secondary']};
+                background: linear-gradient(135deg, rgba(222, 255, 154, 0.1) 0%, rgba(56, 189, 248, 0.1) 100%);
+                border-left: 4px solid {COLORS['accent']};
                 border-radius: 8px;
                 padding: 1rem 1.25rem;
             ">
@@ -245,14 +274,18 @@ if thought_log:
     with tab2:
         st.markdown(f"""
         <div style="
-            background: white;
-            border-radius: 16px;
+            background: {COLORS['card']};
+            border: 1px solid {COLORS['border']};
+            border-radius: 20px;
             padding: 2rem;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-            border: 1px solid rgba(0,0,0,0.05);
         ">
             <div style="margin-bottom: 1.5rem;">
-                <span style="font-size: 1.25rem; font-weight: 600; color: {COLORS['text_primary']};">参照URL一覧</span>
+                <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem;">
+                    <div style="color: {COLORS['accent_secondary']};">
+                        {get_icon('layers', size=20, color=COLORS['accent_secondary'])}
+                    </div>
+                    <span style="font-size: 1.25rem; font-weight: 600; color: {COLORS['text_primary']};">参照URL一覧</span>
+                </div>
                 <p style="font-size: 0.875rem; color: {COLORS['text_secondary']}; margin-top: 0.25rem;">
                     AIが情報収集に使用したWebページの一覧です
                 </p>
@@ -268,7 +301,8 @@ if thought_log:
                     display: flex;
                     align-items: center;
                     padding: 1rem;
-                    background: {COLORS['bg_primary']};
+                    background: {COLORS['card_elevated']};
+                    border: 1px solid {COLORS['border']};
                     border-radius: 8px;
                     margin-bottom: 0.75rem;
                 ">
@@ -276,8 +310,8 @@ if thought_log:
                         width: 32px;
                         height: 32px;
                         border-radius: 8px;
-                        background: {COLORS['secondary']};
-                        color: white;
+                        background: {COLORS['accent_secondary']};
+                        color: {COLORS['text_inverse']};
                         display: flex;
                         align-items: center;
                         justify-content: center;
@@ -302,14 +336,18 @@ if thought_log:
     with tab3:
         st.markdown(f"""
         <div style="
-            background: white;
-            border-radius: 16px;
+            background: {COLORS['card']};
+            border: 1px solid {COLORS['border']};
+            border-radius: 20px;
             padding: 2rem;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-            border: 1px solid rgba(0,0,0,0.05);
         ">
             <div style="margin-bottom: 1.5rem;">
-                <span style="font-size: 1.25rem; font-weight: 600; color: {COLORS['text_primary']};">検索クエリ候補</span>
+                <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem;">
+                    <div style="color: {COLORS['accent_tertiary']};">
+                        {get_icon('activity', size=20, color=COLORS['accent_tertiary'])}
+                    </div>
+                    <span style="font-size: 1.25rem; font-weight: 600; color: {COLORS['text_primary']};">検索クエリ候補</span>
+                </div>
                 <p style="font-size: 0.875rem; color: {COLORS['text_secondary']}; margin-top: 0.25rem;">
                     AIが内部的に実行した検索クエリの一覧です
                 </p>
@@ -325,7 +363,8 @@ if thought_log:
                     display: flex;
                     align-items: center;
                     padding: 0.875rem 1rem;
-                    background: {COLORS['bg_primary']};
+                    background: {COLORS['card_elevated']};
+                    border: 1px solid {COLORS['border']};
                     border-radius: 8px;
                     margin-bottom: 0.5rem;
                 ">
@@ -333,8 +372,8 @@ if thought_log:
                         width: 24px;
                         height: 24px;
                         border-radius: 6px;
-                        background: {COLORS['primary']};
-                        color: white;
+                        background: {COLORS['card']};
+                        color: {COLORS['text_primary']};
                         display: flex;
                         align-items: center;
                         justify-content: center;
@@ -342,6 +381,7 @@ if thought_log:
                         font-size: 0.75rem;
                         margin-right: 0.75rem;
                         flex-shrink: 0;
+                        border: 1px solid {COLORS['border']};
                     ">{idx}</div>
                     <div style="font-size: 0.9375rem; color: {COLORS['text_primary']}; font-weight: 500;">
                         {query}
@@ -356,14 +396,18 @@ if thought_log:
     with tab4:
         st.markdown(f"""
         <div style="
-            background: white;
-            border-radius: 16px;
+            background: {COLORS['card']};
+            border: 1px solid {COLORS['border']};
+            border-radius: 20px;
             padding: 2rem;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-            border: 1px solid rgba(0,0,0,0.05);
         ">
             <div style="margin-bottom: 1.5rem;">
-                <span style="font-size: 1.25rem; font-weight: 600; color: {COLORS['text_primary']};">ブランド言及状況</span>
+                <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem;">
+                    <div style="color: {COLORS['success']};">
+                        {get_icon('chart', size=20, color=COLORS['success'])}
+                    </div>
+                    <span style="font-size: 1.25rem; font-weight: 600; color: {COLORS['text_primary']};">ブランド言及状況</span>
+                </div>
                 <p style="font-size: 0.875rem; color: {COLORS['text_secondary']}; margin-top: 0.25rem;">
                     各ブランドの推薦順位と理由を分析します
                 </p>
@@ -399,13 +443,13 @@ if thought_log:
 
                     # 感情による色設定
                     if sentiment == 'positive':
-                        gradient = f"linear-gradient(135deg, {COLORS['accent']} 0%, #34D399 100%)"
+                        gradient = f"linear-gradient(135deg, {COLORS['success']} 0%, #86efac 100%)"
                         sentiment_label = "ポジティブ"
                     elif sentiment == 'negative':
-                        gradient = f"linear-gradient(135deg, {COLORS['danger']} 0%, #F87171 100%)"
+                        gradient = f"linear-gradient(135deg, {COLORS['danger']} 0%, #fca5a5 100%)"
                         sentiment_label = "ネガティブ"
                     else:
-                        gradient = f"linear-gradient(135deg, {COLORS['secondary']} 0%, #60A5FA 100%)"
+                        gradient = f"linear-gradient(135deg, {COLORS['accent_secondary']} 0%, #7dd3fc 100%)"
                         sentiment_label = "中立"
 
                     st.markdown(f"""
@@ -446,7 +490,7 @@ if thought_log:
                 <div style="
                     margin-top: 2rem;
                     padding-top: 1.5rem;
-                    border-top: 1px solid rgba(0,0,0,0.05);
+                    border-top: 1px solid {COLORS['border']};
                 ">
                     <div style="font-size: 1rem; font-weight: 600; color: {COLORS['text_primary']}; margin-bottom: 1rem;">
                         推薦されなかったブランド
@@ -458,7 +502,7 @@ if thought_log:
 
                     st.markdown(f"""
                     <div style="
-                        background: {COLORS['bg_primary']};
+                        background: {COLORS['card_elevated']};
                         border-left: 4px solid {COLORS['warning']};
                         border-radius: 8px;
                         padding: 1rem 1.25rem;
@@ -482,14 +526,24 @@ if thought_log:
 else:
     st.markdown(f"""
     <div style="
-        background: white;
-        border-radius: 16px;
+        background: {COLORS['card']};
+        border: 1px solid {COLORS['border']};
+        border-radius: 20px;
         padding: 3rem;
         text-align: center;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-        border: 1px solid rgba(0,0,0,0.05);
     ">
-        <div style="font-size: 4rem; margin-bottom: 1rem;">🧠</div>
+        <div style="
+            width: 80px;
+            height: 80px;
+            background: {COLORS['card_elevated']};
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+        ">
+            {get_icon('brain', size=40, color=COLORS['text_muted'])}
+        </div>
         <div style="font-size: 1.25rem; font-weight: 600; color: {COLORS['text_primary']}; margin-bottom: 0.5rem;">
             思考ログデータが見つかりません
         </div>
@@ -497,12 +551,13 @@ else:
             デモモードを有効化するか、データを取得してください
         </div>
         <div style="
-            background: {COLORS['bg_primary']};
+            background: {COLORS['card_elevated']};
+            border: 1px solid {COLORS['border']};
             border-radius: 8px;
             padding: 1rem;
             display: inline-block;
         ">
-            <code style="color: {COLORS['secondary']};">DEMO_MODE=true</code>
+            <code style="color: {COLORS['accent']};">DEMO_MODE=true</code>
         </div>
     </div>
     """, unsafe_allow_html=True)
