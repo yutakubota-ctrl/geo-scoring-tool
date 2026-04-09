@@ -1,0 +1,88 @@
+{
+  "query_id": "q_20260409_001",
+  "query_text": "マーケティングツール おすすめ",
+  "executed_at": "2026-04-09T14:30:00",
+  "llm_model": "chatgpt-o1-preview",
+  "thought_trace": {
+    "step_1": {
+      "title": "候補ブランドの列挙",
+      "description": "マーケティングツール市場の主要プレイヤーを特定。HubSpot、Marketo、Salesforce Marketing Cloud、Adobe Campaign、Zoho CRM等を候補として抽出。",
+      "confidence": 0.95
+    },
+    "step_2": {
+      "title": "公式サイトの確認",
+      "description": "各ブランドの公式サイトにアクセスし、製品情報、料金体系、対象顧客層を確認。HubSpotは中小企業向け、Marketoは大企業向けと判定。",
+      "urls": ["https://www.hubspot.com/", "https://www.marketo.com/", "https://www.salesforce.com/"],
+      "confidence": 0.88
+    },
+    "step_3": {
+      "title": "第三者レビューサイトの参照",
+      "description": "G2、Capterra、TrustRadiusでのユーザー評価を調査。HubSpotが最高評価（4.4/5.0）、Marketoは4.0/5.0。",
+      "urls": ["https://www.g2.com/products/hubspot", "https://www.capterra.com/p/139202/Marketo/"],
+      "confidence": 0.92
+    },
+    "step_4": {
+      "title": "公的機関・第三者機関の確認",
+      "description": "Gartner Magic Quadrant、Forrester Waveでの位置付けを確認。HubSpotとMarketoがリーダー領域に位置。",
+      "urls": ["https://www.gartner.com/en/marketing/insights"],
+      "confidence": 0.85
+    },
+    "step_5": {
+      "title": "料金・機能比較",
+      "description": "料金体系を比較。HubSpot: $50/月〜、Marketo: $895/月〜。中小企業には価格面でHubSpotが優位。",
+      "confidence": 0.90
+    },
+    "step_6": {
+      "title": "口コミ・評判の確認",
+      "description": "Reddit、X（Twitter）、LinkedInでの言及を調査。HubSpotは無料プランが好評、Marketoは導入支援が高評価。",
+      "urls": ["https://www.reddit.com/r/marketing/", "https://twitter.com/search?q=HubSpot"],
+      "confidence": 0.80
+    },
+    "step_7": {
+      "title": "最終判断（推薦順位の決定）",
+      "description": "総合評価により推薦順位を決定。1位: HubSpot（中小企業向け）、2位: Marketo（大企業向け）、3位: Salesforce（統合環境重視）。",
+      "confidence": 0.93
+    }
+  },
+  "search_queries_used": [
+    "marketing automation tools comparison 2026",
+    "HubSpot pricing 2026",
+    "Marketo vs HubSpot features",
+    "best marketing tools for SMB",
+    "Gartner marketing automation quadrant"
+  ],
+  "selected_urls": [
+    "https://www.hubspot.com/",
+    "https://www.g2.com/products/hubspot",
+    "https://www.marketo.com/",
+    "https://www.gartner.com/en/marketing/insights",
+    "https://www.capterra.com/p/139202/Marketo/"
+  ],
+  "final_reasoning": "HubSpotは中小企業向けに最適。無料プランあり、使いやすいUI、豊富な統合機能が評価ポイント。Marketoは大企業向けで高機能だが価格が高い。Salesforceは既存CRM利用企業に推奨。",
+  "brand_mentions": {
+    "HubSpot": {
+      "mentioned": true,
+      "position": 1,
+      "sentiment": "positive",
+      "reasoning": "中小企業に最適、無料プラン、高評価"
+    },
+    "Marketo": {
+      "mentioned": true,
+      "position": 2,
+      "sentiment": "neutral",
+      "reasoning": "大企業向け、高機能だが高価"
+    },
+    "Salesforce": {
+      "mentioned": true,
+      "position": 3,
+      "sentiment": "neutral",
+      "reasoning": "既存CRM環境での統合性が強み"
+    },
+    "自社ツール": {
+      "mentioned": false,
+      "position": null,
+      "sentiment": null,
+      "reasoning": "知名度不足、第三者レビューなし、価格情報不明確"
+    }
+  }
+}

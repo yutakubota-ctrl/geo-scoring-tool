@@ -1,0 +1,147 @@
+{
+  "tasks": [
+    {
+      "task_id": "task_001",
+      "priority": "P0",
+      "task_type": "Content",
+      "description": "料金ページの詳細化（競合比較表、ROI計算ツール追加）",
+      "assigned_to": "Content Team",
+      "status": "In_Progress",
+      "due_date": "2026-04-20",
+      "impact_score": 9,
+      "effort_score": 3,
+      "parent_gap_id": "gap_pricing_001",
+      "approval_status": "Approved"
+    },
+    {
+      "task_id": "task_002",
+      "priority": "P0",
+      "task_type": "Content",
+      "description": "G2・Capterraへの顧客レビュー獲得キャンペーン",
+      "assigned_to": "Marketing Team",
+      "status": "Pending",
+      "due_date": "2026-05-01",
+      "impact_score": 10,
+      "effort_score": 5,
+      "parent_gap_id": "gap_review_001",
+      "approval_status": "Approved"
+    },
+    {
+      "task_id": "task_003",
+      "priority": "P0",
+      "task_type": "Technical",
+      "description": "無料トライアル登録フォームの最適化（入力項目削減）",
+      "assigned_to": "Dev Team",
+      "status": "Pending",
+      "due_date": "2026-04-25",
+      "impact_score": 8,
+      "effort_score": 2,
+      "parent_gap_id": "gap_conversion_001",
+      "approval_status": "Approved"
+    },
+    {
+      "task_id": "task_004",
+      "priority": "P1",
+      "task_type": "Content",
+      "description": "導入事例ページの拡充（業界別・企業規模別）",
+      "assigned_to": "Content Team",
+      "status": "Pending",
+      "due_date": "2026-05-10",
+      "impact_score": 7,
+      "effort_score": 6,
+      "parent_gap_id": "gap_casestudy_001",
+      "approval_status": "Draft"
+    },
+    {
+      "task_id": "task_005",
+      "priority": "P1",
+      "task_type": "Content",
+      "description": "FAQ・よくある質問セクションの充実",
+      "assigned_to": "Support Team",
+      "status": "Done",
+      "due_date": "2026-04-15",
+      "impact_score": 6,
+      "effort_score": 2,
+      "parent_gap_id": "gap_faq_001",
+      "approval_status": "Approved"
+    },
+    {
+      "task_id": "task_006",
+      "priority": "P1",
+      "task_type": "Technical",
+      "description": "ページ読み込み速度の改善（LCPを1.5秒以下に）",
+      "assigned_to": "Dev Team",
+      "status": "In_Progress",
+      "due_date": "2026-04-30",
+      "impact_score": 7,
+      "effort_score": 4,
+      "parent_gap_id": "gap_performance_001",
+      "approval_status": "Approved"
+    },
+    {
+      "task_id": "task_007",
+      "priority": "P2",
+      "task_type": "Content",
+      "description": "製品デモ動画の作成（3分以内）",
+      "assigned_to": "Content Team",
+      "status": "Pending",
+      "due_date": "2026-05-20",
+      "impact_score": 5,
+      "effort_score": 7,
+      "parent_gap_id": "gap_demo_001",
+      "approval_status": "Draft"
+    },
+    {
+      "task_id": "task_008",
+      "priority": "P2",
+      "task_type": "Analytics",
+      "description": "競合キーワードギャップ分析（月次レポート自動化）",
+      "assigned_to": "Gem_02",
+      "status": "Pending",
+      "due_date": "2026-05-15",
+      "impact_score": 6,
+      "effort_score": 5,
+      "parent_gap_id": "gap_keyword_001",
+      "approval_status": "Draft"
+    },
+    {
+      "task_id": "task_009",
+      "priority": "P0",
+      "task_type": "Content",
+      "description": "ブランド名のWikipedia編集（信頼性向上）",
+      "assigned_to": "PR Team",
+      "status": "Pending",
+      "due_date": "2026-04-28",
+      "impact_score": 9,
+      "effort_score": 4,
+      "parent_gap_id": "gap_trust_001",
+      "approval_status": "Approved"
+    },
+    {
+      "task_id": "task_010",
+      "priority": "P1",
+      "task_type": "Content",
+      "description": "他社ツールとの比較ページ作成（公平な評価）",
+      "assigned_to": "Content Team",
+      "status": "Pending",
+      "due_date": "2026-05-05",
+      "impact_score": 8,
+      "effort_score": 5,
+      "parent_gap_id": "gap_comparison_001",
+      "approval_status": "Draft"
+    }
+  ],
+  "summary": {
+    "total_tasks": 10,
+    "p0_count": 4,
+    "p1_count": 4,
+    "p2_count": 2,
+    "status_breakdown": {
+      "Pending": 7,
+      "In_Progress": 2,
+      "Done": 1
+    },
+    "avg_impact": 7.5,
+    "avg_effort": 4.3
+  }
+}

@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>スコア算定ロジック解説 - GEOスコアリング</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .score-example {
+            transition: all 0.3s;
+        }
+        .score-example:hover {
+            transform: scale(1.02);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- ヘッダー -->
+    <header class="bg-blue-600 text-white shadow-lg">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-2xl font-bold">スコア算定ロジック解説</h1>
+                    <p class="text-blue-100">GEOスコアリングの評価基準と計算方法</p>
+                </div>
+                <a href="/" class="bg-white text-blue-600 px-4 py-2 rounded-lg font-semibold hover:bg-blue-50 transition-colors">
+                    ← ダッシュボードに戻る
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 py-8 max-w-4xl">
+        <!-- 概要 -->
+        <section class="bg-white rounded-lg shadow-md p-6 mb-8">
+            <h2 class="text-2xl font-bold mb-4 text-gray-800">GEOスコアリングとは</h2>
+            <p class="text-gray-700 mb-4">
+                GEO（Generative Engine Optimization）スコアリングは、AI検索エンジン（Gemini、ChatGPT、Perplexity等）の
+                応答における<strong>ブランドの可視性と評価</strong>を定量化する指標です。
+            </p>
+            <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded">
+                <p class="text-blue-800">
+                    <strong>従来のSEO</strong>が検索結果の順位を最適化するのに対し、<br>
+                    <strong>GEO</strong>はAIが生成する回答の中でブランドがどのように言及・推奨されるかを最適化します。
+                </p>
+            </div>
+        </section>
+
+        <!-- 総合スコア -->
+        <section class="bg-white rounded-lg shadow-md p-6 mb-8">
+            <h2 class="text-2xl font-bold mb-4 text-gray-800">総合スコア（0〜100点）</h2>
+            <p class="text-gray-700 mb-4">
+                総合スコアは以下4つの指標の合計で算出されます：
+            </p>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                <div class="text-center p-4 bg-green-50 rounded-lg">
+                    <div class="text-2xl font-bold text-green-600">10点</div>
+                    <div class="text-sm text-gray-600">認知</div>
+                </div>
+                <div class="text-center p-4 bg-purple-50 rounded-lg">
+                    <div class="text-2xl font-bold text-purple-600">30点</div>
+                    <div class="text-sm text-gray-600">推奨度</div>
+                </div>
+                <div class="text-center p-4 bg-orange-50 rounded-lg">
+                    <div class="text-2xl font-bold text-orange-600">20点</div>
+                    <div class="text-sm text-gray-600">ポジション</div>
+                </div>
+                <div class="text-center p-4 bg-red-50 rounded-lg">
+                    <div class="text-2xl font-bold text-red-600">40点</div>
+                    <div class="text-sm text-gray-600">正確性</div>
+                </div>
+            </div>
+            <div class="bg-gray-100 p-4 rounded-lg">
+                <code class="text-sm">
+                    総合スコア = 認知(0-10) + 推奨度(-10〜30) + ポジション(0-20) + 正確性(0-40)
+                </code>
+            </div>
+        </section>
+
+        <!-- 指標1: 認知スコア -->
+        <section class="bg-white rounded-lg shadow-md p-6 mb-8">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                    <span class="text-2xl">👁️</span>
+                </div>
+                <div>
+                    <h2 class="text-xl font-bold text-gray-800">1. 認知スコア（Visibility）</h2>
+                    <p class="text-gray-500">0点 または 10点</p>
+                </div>
+            </div>
+
+            <p class="text-gray-700 mb-4">
+                AIの応答文中にブランド名が<strong>明示的に言及されているか</strong>を評価します。
+            </p>
+
+            <div class="border rounded-lg overflow-hidden mb-4">
+                <table class="w-full">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-4 py-3 text-left text-sm font-semibold">スコア</th>
+                            <th class="px-4 py-3 text-left text-sm font-semibold">条件</th>
+                            <th class="px-4 py-3 text-left text-sm font-semibold">例</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="border-t">
+                            <td class="px-4 py-3 font-bold text-green-600">10点</td>
+                            <td class="px-4 py-3">ブランド名が1回以上言及</td>
+                            <td class="px-4 py-3 text-sm text-gray-600">「<strong>Salesforce</strong>は最も人気のあるCRMです」</td>
+                        </tr>
+                        <tr class="border-t bg-gray-50">
+                            <td class="px-4 py-3 font-bold text-red-600">0点</td>
+                            <td class="px-4 py-3">ブランド名が一切言及されていない</td>
+                            <td class="px-4 py-3 text-sm text-gray-600">「CRMツールには様々な選択肢があります」</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="bg-green-50 p-4 rounded-lg">
+                <p class="text-sm text-green-800">
+                    <strong>判定ロジック:</strong> ブランド名の完全一致または部分一致（大文字小文字を区別しない）で検索。
+                    略称や別名も考慮（例: Salesforce → SF, セールスフォース）
+                </p>
+            </div>
+        </section>
+
+        <!-- 指標2: 推奨度スコア -->
+        <section class="bg-white rounded-lg shadow-md p-6 mb-8">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
+                    <span class="text-2xl">💜</span>
+                </div>
+                <div>
+                    <h2 class="text-xl font-bold text-gray-800">2. 推奨度スコア（Sentiment）</h2>
+                    <p class="text-gray-500">-10点 〜 30点</p>
+                </div>
+            </div>
+
+            <p class="text-gray-700 mb-4">
+                ブランドが<strong>どのようなトーンで言及されているか</strong>を感情分析で評価します。
+            </p>
+
+            <div class="border rounded-lg overflow-hidden mb-4">
+                <table class="w-full">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-4 py-3 text-left text-sm font-semibold">スコア</th>
+                            <th class="px-4 py-3 text-left text-sm font-semibold">評価</th>
+                            <th class="px-4 py-3 text-left text-sm font-semibold">典型的な表現</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="border-t">
+                            <td class="px-4 py-3 font-bold text-purple-600">30点</td>
+                            <td class="px-4 py-3">強く肯定的</td>
+                            <td class="px-4 py-3 text-sm text-gray-600">「最もおすすめ」「業界最高」「圧倒的な」「絶対に使うべき」</td>
+                        </tr>
+                        <tr class="border-t bg-gray-50">
+                            <td class="px-4 py-3 font-bold text-purple-500">20点</td>
+                            <td class="px-4 py-3">やや肯定的</td>
+                            <td class="px-4 py-3 text-sm text-gray-600">「人気がある」「信頼性が高い」「多くの企業が採用」</td>
+                        </tr>
+                        <tr class="border-t">
+                            <td class="px-4 py-3 font-bold text-gray-500">10点</td>
+                            <td class="px-4 py-3">中立的</td>
+                            <td class="px-4 py-3 text-sm text-gray-600">「〜という選択肢がある」「〜も検討できます」</td>
+                        </tr>
+                        <tr class="border-t bg-gray-50">
+                            <td class="px-4 py-3 font-bold text-orange-500">0点</td>
+                            <td class="px-4 py-3">やや否定的</td>
+                            <td class="px-4 py-3 text-sm text-gray-600">「コストが高い」「学習曲線が急」「小規模には不向き」</td>
+                        </tr>
+                        <tr class="border-t">
+                            <td class="px-4 py-3 font-bold text-red-600">-10点</td>
+                            <td class="px-4 py-3">強く否定的</td>
+                            <td class="px-4 py-3 text-sm text-gray-600">「おすすめしない」「問題が多い」「避けるべき」</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="bg-purple-50 p-4 rounded-lg">
+                <p class="text-sm text-purple-800">
+                    <strong>判定ロジック:</strong> AIが文脈を分析し、ブランドに対する感情的なトーンを5段階で評価。
+                    比較表現（「〜より優れている」）や推奨表現（「おすすめです」）を重視。
+                </p>
+            </div>
+        </section>
+
+        <!-- 指標3: ポジションスコア -->
+        <section class="bg-white rounded-lg shadow-md p-6 mb-8">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center">
+                    <span class="text-2xl">📍</span>
+                </div>
+                <div>
+                    <h2 class="text-xl font-bold text-gray-800">3. ポジションスコア（Positioning）</h2>
+                    <p class="text-gray-500">0点 〜 20点</p>
+                </div>
+            </div>
+
+            <p class="text-gray-700 mb-4">
+                応答文の中で<strong>どの位置に言及されているか</strong>を評価します。
+                一般的に、最初に言及されるブランドほど印象に残りやすいとされています。
+            </p>
+
+            <div class="border rounded-lg overflow-hidden mb-4">
+                <table class="w-full">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-4 py-3 text-left text-sm font-semibold">スコア</th>
+                            <th class="px-4 py-3 text-left text-sm font-semibold">位置</th>
+                            <th class="px-4 py-3 text-left text-sm font-semibold">説明</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="border-t">
+                            <td class="px-4 py-3 font-bold text-orange-600">20点</td>
+                            <td class="px-4 py-3">最優先・最初</td>
+                            <td class="px-4 py-3 text-sm text-gray-600">リストの1番目、または「最もおすすめは〜」と最初に言及</td>
+                        </tr>
+                        <tr class="border-t bg-gray-50">
+                            <td class="px-4 py-3 font-bold text-orange-500">15点</td>
+                            <td class="px-4 py-3">上位</td>
+                            <td class="px-4 py-3 text-sm text-gray-600">リストの2〜3番目、または序盤のセクションで言及</td>
+                        </tr>
+                        <tr class="border-t">
+                            <td class="px-4 py-3 font-bold text-orange-400">10点</td>
+                            <td class="px-4 py-3">中位</td>
+                            <td class="px-4 py-3 text-sm text-gray-600">リストの中間、または本文の中盤で言及</td>
+                        </tr>
+                        <tr class="border-t bg-gray-50">
+                            <td class="px-4 py-3 font-bold text-orange-300">5点</td>
+                            <td class="px-4 py-3">下位</td>
+                            <td class="px-4 py-3 text-sm text-gray-600">リストの後半、または補足的な位置で言及</td>
+                        </tr>
+                        <tr class="border-t">
+                            <td class="px-4 py-3 font-bold text-gray-400">0点</td>
+                            <td class="px-4 py-3">言及なし</td>
+                            <td class="px-4 py-3 text-sm text-gray-600">ブランドが言及されていない場合</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="bg-orange-50 p-4 rounded-lg">
+                <p class="text-sm text-orange-800">
+                    <strong>判定ロジック:</strong> ブランドの初出位置を文字数または段落番号で特定。
+                    リスト形式の場合は番号を、文章形式の場合は相対的な位置（前半/中盤/後半）を評価。
+                </p>
+            </div>
+        </section>
+
+        <!-- 指標4: 正確性スコア -->
+        <section class="bg-white rounded-lg shadow-md p-6 mb-8">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
+                    <span class="text-2xl">✓</span>
+                </div>
+                <div>
+                    <h2 class="text-xl font-bold text-gray-800">4. 正確性スコア（Accuracy）</h2>
+                    <p class="text-gray-500">0点 〜 40点</p>
+                </div>
+            </div>
+
+            <p class="text-gray-700 mb-4">
+                ブランドに関する情報が<strong>事実に基づいて正確か</strong>を評価します。
+                誤情報の拡散はブランドイメージを損なうため、最も配点が高い指標です。
+            </p>
+
+            <div class="border rounded-lg overflow-hidden mb-4">
+                <table class="w-full">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-4 py-3 text-left text-sm font-semibold">スコア</th>
+                            <th class="px-4 py-3 text-left text-sm font-semibold">評価</th>
+                            <th class="px-4 py-3 text-left text-sm font-semibold">チェック項目</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="border-t">
+                            <td class="px-4 py-3 font-bold text-green-600">40点</td>
+                            <td class="px-4 py-3">完全に正確</td>
+                            <td class="px-4 py-3 text-sm text-gray-600">すべての情報（機能、価格、特徴）が最新かつ正確</td>
+                        </tr>
+                        <tr class="border-t bg-gray-50">
+                            <td class="px-4 py-3 font-bold text-blue-600">30点</td>
+                            <td class="px-4 py-3">概ね正確</td>
+                            <td class="px-4 py-3 text-sm text-gray-600">主要な情報は正確だが、細部に古い情報あり</td>
+                        </tr>
+                        <tr class="border-t">
+                            <td class="px-4 py-3 font-bold text-yellow-600">20点</td>
+                            <td class="px-4 py-3">一部不正確</td>
+                            <td class="px-4 py-3 text-sm text-gray-600">価格や機能に一部誤りがあるが、重大ではない</td>
+                        </tr>
+                        <tr class="border-t bg-gray-50">
+                            <td class="px-4 py-3 font-bold text-orange-600">10点</td>
+                            <td class="px-4 py-3">多くが不正確</td>
+                            <td class="px-4 py-3 text-sm text-gray-600">複数の重要な情報に誤りがある</td>
+                        </tr>
+                        <tr class="border-t">
+                            <td class="px-4 py-3 font-bold text-red-600">0点</td>
+                            <td class="px-4 py-3">重大な誤情報</td>
+                            <td class="px-4 py-3 text-sm text-gray-600">ブランドの根本的な特徴や存在を誤認している</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="bg-red-50 p-4 rounded-lg mb-4">
+                <p class="text-sm text-red-800">
+                    <strong>判定ロジック:</strong> 参照情報（公式サイト、プレスリリース等）との照合。
+                    以下の項目を重点的にチェック：
+                </p>
+                <ul class="text-sm text-red-700 mt-2 ml-4 list-disc">
+                    <li>価格・料金プラン</li>
+                    <li>主要機能・特徴</li>
+                    <li>対応プラットフォーム</li>
+                    <li>企業情報（設立年、本社所在地等）</li>
+                    <li>最新のアップデート・新機能</li>
+                </ul>
+            </div>
+
+            <div class="bg-yellow-50 border border-yellow-200 p-4 rounded-lg">
+                <p class="text-sm text-yellow-800">
+                    <strong>⚠️ 注意:</strong> 正確性評価には「参照情報」の入力を推奨します。
+                    参照情報がない場合は、AIの一般知識に基づいて評価されます。
+                </p>
+            </div>
+        </section>
+
+        <!-- スコア解釈ガイド -->
+        <section class="bg-white rounded-lg shadow-md p-6 mb-8">
+            <h2 class="text-2xl font-bold mb-4 text-gray-800">スコアの解釈ガイド</h2>
+
+            <div class="space-y-4">
+                <div class="score-example flex items-center gap-4 p-4 bg-green-50 rounded-lg border border-green-200">
+                    <div class="text-center">
+                        <div class="text-3xl font-bold text-green-600">80-100</div>
+                        <div class="text-sm text-green-700">優秀</div>
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-green-800 font-semibold">AIがブランドを積極的に推奨している状態</p>
+                        <p class="text-sm text-green-700">最優先で言及され、肯定的な文脈で紹介されています。GEO施策が効果を発揮しています。</p>
+                    </div>
+                </div>
+
+                <div class="score-example flex items-center gap-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                    <div class="text-center">
+                        <div class="text-3xl font-bold text-blue-600">60-79</div>
+                        <div class="text-sm text-blue-700">良好</div>
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-blue-800 font-semibold">競合と同等以上の認知を獲得</p>
+                        <p class="text-sm text-blue-700">ブランドは認知されていますが、さらなる最適化の余地があります。推奨度や位置の改善を検討してください。</p>
+                    </div>
+                </div>
+
+                <div class="score-example flex items-center gap-4 p-4 bg-yellow-50 rounded-lg border border-yellow-200">
+                    <div class="text-center">
+                        <div class="text-3xl font-bold text-yellow-600">40-59</div>
+                        <div class="text-sm text-yellow-700">要改善</div>
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-yellow-800 font-semibold">認知はあるが推奨されていない</p>
+                        <p class="text-sm text-yellow-700">ブランドは言及されていますが、中立的または下位の扱いです。コンテンツ戦略の見直しが必要です。</p>
+                    </div>
+                </div>
+
+                <div class="score-example flex items-center gap-4 p-4 bg-red-50 rounded-lg border border-red-200">
+                    <div class="text-center">
+                        <div class="text-3xl font-bold text-red-600">0-39</div>
+                        <div class="text-sm text-red-700">要注意</div>
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-red-800 font-semibold">AIに認知されていない、または否定的</p>
+                        <p class="text-sm text-red-700">ブランドが言及されないか、否定的な文脈で言及されています。早急なGEO施策が必要です。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- GEO改善のヒント -->
+        <section class="bg-white rounded-lg shadow-md p-6 mb-8">
+            <h2 class="text-2xl font-bold mb-4 text-gray-800">GEO改善のヒント</h2>
+
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="border rounded-lg p-4">
+                    <h3 class="font-bold text-lg mb-2 text-green-600">認知スコアを上げるには</h3>
+                    <ul class="text-sm text-gray-700 space-y-2">
+                        <li>✓ 公式サイトの構造化データを最適化</li>
+                        <li>✓ Wikipedia、業界メディアでの言及を増やす</li>
+                        <li>✓ ブランド名を含む質の高いコンテンツを発信</li>
+                        <li>✓ 業界レポートやランキングへの掲載を目指す</li>
+                    </ul>
+                </div>
+
+                <div class="border rounded-lg p-4">
+                    <h3 class="font-bold text-lg mb-2 text-purple-600">推奨度を上げるには</h3>
+                    <ul class="text-sm text-gray-700 space-y-2">
+                        <li>✓ 顧客レビュー・事例を積極的に公開</li>
+                        <li>✓ 第三者による評価・推薦を獲得</li>
+                        <li>✓ 比較記事で強みを明確に訴求</li>
+                        <li>✓ アワード・認証を取得してアピール</li>
+                    </ul>
+                </div>
+
+                <div class="border rounded-lg p-4">
+                    <h3 class="font-bold text-lg mb-2 text-orange-600">ポジションを上げるには</h3>
+                    <ul class="text-sm text-gray-700 space-y-2">
+                        <li>✓ 特定カテゴリでのリーダーシップを確立</li>
+                        <li>✓ 「〜といえば○○」のブランド想起を強化</li>
+                        <li>✓ SEO対策と連携してドメインオーソリティを向上</li>
+                        <li>✓ 業界キーワードとの関連性を高める</li>
+                    </ul>
+                </div>
+
+                <div class="border rounded-lg p-4">
+                    <h3 class="font-bold text-lg mb-2 text-red-600">正確性を維持するには</h3>
+                    <ul class="text-sm text-gray-700 space-y-2">
+                        <li>✓ 公式サイトの情報を常に最新に保つ</li>
+                        <li>✓ 価格・機能の変更を速やかに公開</li>
+                        <li>✓ 構造化データ（Schema.org）を正確に設定</li>
+                        <li>✓ 誤情報を見つけたら訂正リクエストを送信</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- FAQ -->
+        <section class="bg-white rounded-lg shadow-md p-6">
+            <h2 class="text-2xl font-bold mb-4 text-gray-800">よくある質問</h2>
+
+            <div class="space-y-4">
+                <details class="border rounded-lg">
+                    <summary class="px-4 py-3 cursor-pointer font-semibold text-gray-700 hover:bg-gray-50">
+                        Q: スコアはどのくらいの頻度で測定すべきですか？
+                    </summary>
+                    <div class="px-4 py-3 border-t bg-gray-50">
+                        <p class="text-gray-600">
+                            週1回〜月2回の測定を推奨します。AIモデルは定期的にアップデートされるため、
+                            継続的なモニタリングが重要です。大きな施策の前後には追加で測定することをおすすめします。
+                        </p>
+                    </div>
+                </details>
+
+                <details class="border rounded-lg">
+                    <summary class="px-4 py-3 cursor-pointer font-semibold text-gray-700 hover:bg-gray-50">
+                        Q: 競合のスコアも測定できますか？
+                    </summary>
+                    <div class="px-4 py-3 border-t bg-gray-50">
+                        <p class="text-gray-600">
+                            はい、同じAI応答に対して複数のブランド名で評価を実行することで、
+                            競合比較が可能です。「競合比較」タブで一覧表示できます。
+                        </p>
+                    </div>
+                </details>
+
+                <details class="border rounded-lg">
+                    <summary class="px-4 py-3 cursor-pointer font-semibold text-gray-700 hover:bg-gray-50">
+                        Q: 参照情報は必須ですか？
+                    </summary>
+                    <div class="px-4 py-3 border-t bg-gray-50">
+                        <p class="text-gray-600">
+                            必須ではありませんが、正確性スコアの精度を上げるために推奨します。
+                            公式サイトの情報、最新の価格表、プレスリリースなどを入力してください。
+                        </p>
+                    </div>
+                </details>
+
+                <details class="border rounded-lg">
+                    <summary class="px-4 py-3 cursor-pointer font-semibold text-gray-700 hover:bg-gray-50">
+                        Q: 推奨度がマイナスになることはありますか？
+                    </summary>
+                    <div class="px-4 py-3 border-t bg-gray-50">
+                        <p class="text-gray-600">
+                            はい、AIが否定的な文脈でブランドを言及している場合、推奨度スコアは
+                            -10点まで下がることがあります。この場合は、否定的な言及の原因を
+                            調査し、対策を講じる必要があります。
+                        </p>
+                    </div>
+                </details>
+            </div>
+        </section>
+    </main>
+
+    <!-- フッター -->
+    <footer class="bg-gray-800 text-white py-6 mt-12">
+        <div class="container mx-auto px-4 text-center">
+            <p class="text-gray-400">GEOスコアリングツール v1.0</p>
+            <a href="/" class="text-blue-400 hover:text-blue-300 mt-2 inline-block">← ダッシュボードに戻る</a>
+        </div>
+    </footer>
+</body>
+</html>

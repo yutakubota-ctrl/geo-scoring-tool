@@ -1,0 +1,41 @@
+# GEOスコアリングツール - Streamlit Cloud デプロイ用
+# デモモード実行に必要な最小限のパッケージ
+
+# ========================================
+# コアパッケージ
+# ========================================
+
+# ダッシュボード
+streamlit>=1.30.0
+plotly>=5.18.0
+
+# データベース（SQLite用）
+sqlalchemy>=2.0.0
+
+# データ処理
+pandas>=2.0.0
+pyyaml>=6.0.0
+
+# 環境変数
+python-dotenv>=1.0.0
+
+# データ分析
+numpy>=1.24.0
+
+# ユーティリティ
+pytz>=2023.3
+
+# ========================================
+# 注意事項
+# ========================================
+#
+# 以下のパッケージは本番環境（フル機能）でのみ必要:
+# - google-genai: Gemini API連携
+# - psycopg2-binary: PostgreSQL接続
+# - google-cloud-bigquery: BigQuery連携
+# - openai, anthropic: LLM API連携
+# - serpapi: 検索API連携
+# - langchain, langgraph: エージェント機能
+#
+# デモモードではこれらは不要です。
+# フル機能版が必要な場合は requirements_v2.txt を参照してください。

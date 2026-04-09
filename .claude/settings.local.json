@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:ai.google.dev)",
+      "Bash(dir:*)",
+      "Bash(vercel --version:*)",
+      "Bash(vercel:*)"
+    ]
+  }
+}

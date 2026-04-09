@@ -1,0 +1,37 @@
+{
+  "mcpServers": {
+    "ahrefs": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-ahrefs"],
+      "env": {
+        "AHREFS_API_KEY": "${AHREFS_API_KEY}"
+      },
+      "metadata": {
+        "description": "Ahrefs SEO data access",
+        "rateLimit": "500 requests/day"
+      }
+    },
+    "serpapi": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-serpapi"],
+      "env": {
+        "SERPAPI_API_KEY": "${SERP_API_KEY}"
+      },
+      "metadata": {
+        "description": "Google search results including AI Overviews",
+        "rateLimit": "5000 searches/month"
+      }
+    },
+    "screaming-frog": {
+      "command": "node",
+      "args": ["mcp-servers/screaming-frog/index.js"],
+      "env": {
+        "SCREAMING_FROG_API_KEY": "${SCREAMING_FROG_API_KEY}"
+      },
+      "metadata": {
+        "description": "Screaming Frog Cloud API for technical SEO crawling",
+        "rateLimit": "Custom implementation"
+      }
+    }
+  }
+}

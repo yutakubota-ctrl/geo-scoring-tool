@@ -1,0 +1,53 @@
+# v2.0 エージェント設定
+
+# エージェント共通設定
+common:
+  model: "claude-sonnet-4-5"
+  temperature: 0.1
+  max_tokens: 4000
+
+# Gem_01: GEO Intelligence Analyst
+gem_01:
+  enabled: true
+  schedule: "weekly"
+  target_queries:
+    - "マーケティングツール おすすめ"
+    - "営業支援ツール 比較"
+  serp_api:
+    engine: "google"
+    num_results: 10
+
+# Gem_02: Gap Strategist
+gem_02:
+  enabled: true
+  priority_matrix:
+    high_impact_low_effort: "P0"
+    high_impact_high_effort: "P1"
+    low_impact_low_effort: "P2"
+    low_impact_high_effort: "P3"
+
+# Gem_03: Content Engineer
+gem_03:
+  enabled: true
+  distribution_channels:
+    - "note"
+    - "blog"
+    - "press_release"
+  tone_presets:
+    professional: "formal_business"
+    casual: "friendly_conversational"
+
+# Gem_04: Technical Optimizer
+gem_04:
+  enabled: true
+  schema_types:
+    - "Product"
+    - "FAQ"
+    - "HowTo"
+    - "Organization"
+
+# Gem_05: Echo Monitor
+gem_05:
+  enabled: true
+  monitoring_delay_hours: 72
+  check_interval_hours: 24

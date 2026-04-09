@@ -1,0 +1,402 @@
+[
+  {
+    "query_id": "q_demo_000",
+    "query_text": "マーケティングツール おすすめ",
+    "executed_at": "2026-04-09T15:13:26.129517",
+    "llm_model": "ChatGPT o1-preview",
+    "thought_trace": {
+      "step_1": "候補ブランドを列挙: ConvertKit, Pardot, Marketo",
+      "step_2": "ConvertKitの公式サイト（convertkit.com）を確認",
+      "step_3": "G2レビュー（g2.com/products/convertkit）を参照",
+      "step_4": "特に公的機関の情報は見つからず",
+      "step_5": "ConvertKitとPardotの料金・機能を比較",
+      "step_6": "口コミサイトでConvertKitの評判を確認",
+      "step_7": "ConvertKitは中小企業向け、Pardotは大企業向けと判断"
+    },
+    "search_queries_used": [
+      "マーケティングツール tools comparison",
+      "ConvertKit pricing 2026",
+      "ConvertKit vs Pardot"
+    ],
+    "selected_urls": [
+      "https://www.convertkit.com/",
+      "https://www.g2.com/products/convertkit",
+      "https://www.capterra.com/p/809269/convertkit/"
+    ],
+    "final_reasoning": "ConvertKitは使いやすさとコスパの観点から中小企業に最適と判断",
+    "brand_mentions": {
+      "ConvertKit": {
+        "rank": 1,
+        "score": 8.8
+      },
+      "Pardot": {
+        "rank": 2,
+        "score": 8.1
+      },
+      "Marketo": {
+        "rank": 3,
+        "score": 7.4
+      }
+    }
+  },
+  {
+    "query_id": "q_demo_001",
+    "query_text": "CRM 比較",
+    "executed_at": "2026-03-12T15:13:26.135515",
+    "llm_model": "ChatGPT o1-preview",
+    "thought_trace": {
+      "step_1": "候補ブランドを列挙: Pardot, HubSpot, Salesforce",
+      "step_2": "Pardotの公式サイト（pardot.com）を確認",
+      "step_3": "G2レビュー（g2.com/products/pardot）を参照",
+      "step_4": "特に公的機関の情報は見つからず",
+      "step_5": "PardotとHubSpotの料金・機能を比較",
+      "step_6": "口コミサイトでPardotの評判を確認",
+      "step_7": "Pardotは中小企業向け、HubSpotは大企業向けと判断"
+    },
+    "search_queries_used": [
+      "CRM tools comparison",
+      "Pardot pricing 2026",
+      "Pardot vs HubSpot"
+    ],
+    "selected_urls": [
+      "https://www.pardot.com/",
+      "https://www.g2.com/products/pardot",
+      "https://www.capterra.com/p/289651/pardot/"
+    ],
+    "final_reasoning": "Pardotは使いやすさとコスパの観点から中小企業に最適と判断",
+    "brand_mentions": {
+      "Pardot": {
+        "rank": 1,
+        "score": 9.5
+      },
+      "HubSpot": {
+        "rank": 2,
+        "score": 7.5
+      },
+      "Salesforce": {
+        "rank": 3,
+        "score": 6.6
+      }
+    }
+  },
+  {
+    "query_id": "q_demo_002",
+    "query_text": "メールマーケティング ツール",
+    "executed_at": "2026-04-02T15:13:26.135515",
+    "llm_model": "ChatGPT o1-preview",
+    "thought_trace": {
+      "step_1": "候補ブランドを列挙: Mailchimp, ActiveCampaign, ConvertKit",
+      "step_2": "Mailchimpの公式サイト（mailchimp.com）を確認",
+      "step_3": "G2レビュー（g2.com/products/mailchimp）を参照",
+      "step_4": "特に公的機関の情報は見つからず",
+      "step_5": "MailchimpとActiveCampaignの料金・機能を比較",
+      "step_6": "口コミサイトでMailchimpの評判を確認",
+      "step_7": "Mailchimpは中小企業向け、ActiveCampaignは大企業向けと判断"
+    },
+    "search_queries_used": [
+      "メールマーケティング tools comparison",
+      "Mailchimp pricing 2026",
+      "Mailchimp vs ActiveCampaign"
+    ],
+    "selected_urls": [
+      "https://www.mailchimp.com/",
+      "https://www.g2.com/products/mailchimp",
+      "https://www.capterra.com/p/959984/mailchimp/"
+    ],
+    "final_reasoning": "Mailchimpは使いやすさとコスパの観点から中小企業に最適と判断",
+    "brand_mentions": {
+      "Mailchimp": {
+        "rank": 1,
+        "score": 8.3
+      },
+      "ActiveCampaign": {
+        "rank": 2,
+        "score": 6.6
+      },
+      "ConvertKit": {
+        "rank": 3,
+        "score": 6.6
+      }
+    }
+  },
+  {
+    "query_id": "q_demo_003",
+    "query_text": "マーケティングオートメーション 選び方",
+    "executed_at": "2026-03-14T15:13:26.135515",
+    "llm_model": "ChatGPT o1-preview",
+    "thought_trace": {
+      "step_1": "候補ブランドを列挙: Pardot, GetResponse, Mailchimp",
+      "step_2": "Pardotの公式サイト（pardot.com）を確認",
+      "step_3": "G2レビュー（g2.com/products/pardot）を参照",
+      "step_4": "特に公的機関の情報は見つからず",
+      "step_5": "PardotとGetResponseの料金・機能を比較",
+      "step_6": "口コミサイトでPardotの評判を確認",
+      "step_7": "Pardotは中小企業向け、GetResponseは大企業向けと判断"
+    },
+    "search_queries_used": [
+      "マーケティングオートメーション tools comparison",
+      "Pardot pricing 2026",
+      "Pardot vs GetResponse"
+    ],
+    "selected_urls": [
+      "https://www.pardot.com/",
+      "https://www.g2.com/products/pardot",
+      "https://www.capterra.com/p/686841/pardot/"
+    ],
+    "final_reasoning": "Pardotは使いやすさとコスパの観点から中小企業に最適と判断",
+    "brand_mentions": {
+      "Pardot": {
+        "rank": 1,
+        "score": 8.7
+      },
+      "GetResponse": {
+        "rank": 2,
+        "score": 7.9
+      },
+      "Mailchimp": {
+        "rank": 3,
+        "score": 6.7
+      }
+    }
+  },
+  {
+    "query_id": "q_demo_004",
+    "query_text": "営業支援ツール ランキング",
+    "executed_at": "2026-03-10T15:13:26.135515",
+    "llm_model": "ChatGPT o1-preview",
+    "thought_trace": {
+      "step_1": "候補ブランドを列挙: Sendinblue, ActiveCampaign, Constant Contact",
+      "step_2": "Sendinblueの公式サイト（sendinblue.com）を確認",
+      "step_3": "G2レビュー（g2.com/products/sendinblue）を参照",
+      "step_4": "特に公的機関の情報は見つからず",
+      "step_5": "SendinblueとActiveCampaignの料金・機能を比較",
+      "step_6": "口コミサイトでSendinblueの評判を確認",
+      "step_7": "Sendinblueは中小企業向け、ActiveCampaignは大企業向けと判断"
+    },
+    "search_queries_used": [
+      "営業支援ツール tools comparison",
+      "Sendinblue pricing 2026",
+      "Sendinblue vs ActiveCampaign"
+    ],
+    "selected_urls": [
+      "https://www.sendinblue.com/",
+      "https://www.g2.com/products/sendinblue",
+      "https://www.capterra.com/p/855780/sendinblue/"
+    ],
+    "final_reasoning": "Sendinblueは使いやすさとコスパの観点から中小企業に最適と判断",
+    "brand_mentions": {
+      "Sendinblue": {
+        "rank": 1,
+        "score": 8.3
+      },
+      "ActiveCampaign": {
+        "rank": 2,
+        "score": 7.5
+      },
+      "Constant Contact": {
+        "rank": 3,
+        "score": 7.4
+      }
+    }
+  },
+  {
+    "query_id": "q_demo_005",
+    "query_text": "顧客管理システム 中小企業",
+    "executed_at": "2026-03-26T15:13:26.135515",
+    "llm_model": "ChatGPT o1-preview",
+    "thought_trace": {
+      "step_1": "候補ブランドを列挙: Constant Contact, HubSpot, GetResponse",
+      "step_2": "Constant Contactの公式サイト（constant contact.com）を確認",
+      "step_3": "G2レビュー（g2.com/products/constant contact）を参照",
+      "step_4": "特に公的機関の情報は見つからず",
+      "step_5": "Constant ContactとHubSpotの料金・機能を比較",
+      "step_6": "口コミサイトでConstant Contactの評判を確認",
+      "step_7": "Constant Contactは中小企業向け、HubSpotは大企業向けと判断"
+    },
+    "search_queries_used": [
+      "顧客管理システム tools comparison",
+      "Constant Contact pricing 2026",
+      "Constant Contact vs HubSpot"
+    ],
+    "selected_urls": [
+      "https://www.constant contact.com/",
+      "https://www.g2.com/products/constant contact",
+      "https://www.capterra.com/p/675660/constant contact/"
+    ],
+    "final_reasoning": "Constant Contactは使いやすさとコスパの観点から中小企業に最適と判断",
+    "brand_mentions": {
+      "Constant Contact": {
+        "rank": 1,
+        "score": 8.7
+      },
+      "HubSpot": {
+        "rank": 2,
+        "score": 7.4
+      },
+      "GetResponse": {
+        "rank": 3,
+        "score": 6.6
+      }
+    }
+  },
+  {
+    "query_id": "q_demo_006",
+    "query_text": "BtoB マーケティングツール",
+    "executed_at": "2026-03-31T15:13:26.135515",
+    "llm_model": "ChatGPT o1-preview",
+    "thought_trace": {
+      "step_1": "候補ブランドを列挙: Constant Contact, Pardot, Mailchimp",
+      "step_2": "Constant Contactの公式サイト（constant contact.com）を確認",
+      "step_3": "G2レビュー（g2.com/products/constant contact）を参照",
+      "step_4": "特に公的機関の情報は見つからず",
+      "step_5": "Constant ContactとPardotの料金・機能を比較",
+      "step_6": "口コミサイトでConstant Contactの評判を確認",
+      "step_7": "Constant Contactは中小企業向け、Pardotは大企業向けと判断"
+    },
+    "search_queries_used": [
+      "BtoB tools comparison",
+      "Constant Contact pricing 2026",
+      "Constant Contact vs Pardot"
+    ],
+    "selected_urls": [
+      "https://www.constant contact.com/",
+      "https://www.g2.com/products/constant contact",
+      "https://www.capterra.com/p/517308/constant contact/"
+    ],
+    "final_reasoning": "Constant Contactは使いやすさとコスパの観点から中小企業に最適と判断",
+    "brand_mentions": {
+      "Constant Contact": {
+        "rank": 1,
+        "score": 9.2
+      },
+      "Pardot": {
+        "rank": 2,
+        "score": 8.4
+      },
+      "Mailchimp": {
+        "rank": 3,
+        "score": 7.2
+      }
+    }
+  },
+  {
+    "query_id": "q_demo_007",
+    "query_text": "リードナーチャリング ツール",
+    "executed_at": "2026-03-30T15:13:26.135515",
+    "llm_model": "ChatGPT o1-preview",
+    "thought_trace": {
+      "step_1": "候補ブランドを列挙: GetResponse, Mailchimp, ActiveCampaign",
+      "step_2": "GetResponseの公式サイト（getresponse.com）を確認",
+      "step_3": "G2レビュー（g2.com/products/getresponse）を参照",
+      "step_4": "特に公的機関の情報は見つからず",
+      "step_5": "GetResponseとMailchimpの料金・機能を比較",
+      "step_6": "口コミサイトでGetResponseの評判を確認",
+      "step_7": "GetResponseは中小企業向け、Mailchimpは大企業向けと判断"
+    },
+    "search_queries_used": [
+      "リードナーチャリング tools comparison",
+      "GetResponse pricing 2026",
+      "GetResponse vs Mailchimp"
+    ],
+    "selected_urls": [
+      "https://www.getresponse.com/",
+      "https://www.g2.com/products/getresponse",
+      "https://www.capterra.com/p/909605/getresponse/"
+    ],
+    "final_reasoning": "GetResponseは使いやすさとコスパの観点から中小企業に最適と判断",
+    "brand_mentions": {
+      "GetResponse": {
+        "rank": 1,
+        "score": 8.5
+      },
+      "Mailchimp": {
+        "rank": 2,
+        "score": 6.7
+      },
+      "ActiveCampaign": {
+        "rank": 3,
+        "score": 6.3
+      }
+    }
+  },
+  {
+    "query_id": "q_demo_008",
+    "query_text": "メルマガ配信 サービス",
+    "executed_at": "2026-03-24T15:13:26.135515",
+    "llm_model": "ChatGPT o1-preview",
+    "thought_trace": {
+      "step_1": "候補ブランドを列挙: Pardot, Mailchimp, Constant Contact",
+      "step_2": "Pardotの公式サイト（pardot.com）を確認",
+      "step_3": "G2レビュー（g2.com/products/pardot）を参照",
+      "step_4": "特に公的機関の情報は見つからず",
+      "step_5": "PardotとMailchimpの料金・機能を比較",
+      "step_6": "口コミサイトでPardotの評判を確認",
+      "step_7": "Pardotは中小企業向け、Mailchimpは大企業向けと判断"
+    },
+    "search_queries_used": [
+      "メルマガ配信 tools comparison",
+      "Pardot pricing 2026",
+      "Pardot vs Mailchimp"
+    ],
+    "selected_urls": [
+      "https://www.pardot.com/",
+      "https://www.g2.com/products/pardot",
+      "https://www.capterra.com/p/271587/pardot/"
+    ],
+    "final_reasoning": "Pardotは使いやすさとコスパの観点から中小企業に最適と判断",
+    "brand_mentions": {
+      "Pardot": {
+        "rank": 1,
+        "score": 9.0
+      },
+      "Mailchimp": {
+        "rank": 2,
+        "score": 7.7
+      },
+      "Constant Contact": {
+        "rank": 3,
+        "score": 7.3
+      }
+    }
+  },
+  {
+    "query_id": "q_demo_009",
+    "query_text": "マーケティング 分析ツール",
+    "executed_at": "2026-03-11T15:13:26.135515",
+    "llm_model": "ChatGPT o1-preview",
+    "thought_trace": {
+      "step_1": "候補ブランドを列挙: Mailchimp, Constant Contact, Sendinblue",
+      "step_2": "Mailchimpの公式サイト（mailchimp.com）を確認",
+      "step_3": "G2レビュー（g2.com/products/mailchimp）を参照",
+      "step_4": "特に公的機関の情報は見つからず",
+      "step_5": "MailchimpとConstant Contactの料金・機能を比較",
+      "step_6": "口コミサイトでMailchimpの評判を確認",
+      "step_7": "Mailchimpは中小企業向け、Constant Contactは大企業向けと判断"
+    },
+    "search_queries_used": [
+      "マーケティング tools comparison",
+      "Mailchimp pricing 2026",
+      "Mailchimp vs Constant Contact"
+    ],
+    "selected_urls": [
+      "https://www.mailchimp.com/",
+      "https://www.g2.com/products/mailchimp",
+      "https://www.capterra.com/p/399331/mailchimp/"
+    ],
+    "final_reasoning": "Mailchimpは使いやすさとコスパの観点から中小企業に最適と判断",
+    "brand_mentions": {
+      "Mailchimp": {
+        "rank": 1,
+        "score": 8.8
+      },
+      "Constant Contact": {
+        "rank": 2,
+        "score": 8.4
+      },
+      "Sendinblue": {
+        "rank": 3,
+        "score": 6.9
+      }
+    }
+  }
+]

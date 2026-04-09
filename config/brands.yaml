@@ -1,0 +1,59 @@
+# GEOスコアリングツール ブランド設定
+
+# 自社ブランド定義
+own_brand:
+  name: "自社ブランド名"  # 実際の名前に変更してください
+  domain: "example.com"
+  keywords:
+    - "キーワード1"
+    - "キーワード2"
+    - "キーワード3"
+  reference_facts: |
+    【製品・サービス情報】
+    - 主力サービス: サービス名
+    - 料金プラン: 月額○○円から
+    - 主な機能: 機能A、機能B、機能C
+
+    【企業情報】
+    - 設立: 20XX年
+    - 本社: 東京都
+
+# 競合ブランド定義（3〜5社）
+competitors:
+  - name: "競合A社"
+    domain: "competitor-a.com"
+    keywords:
+      - "競合Aキーワード1"
+      - "競合Aキーワード2"
+
+  - name: "競合B社"
+    domain: "competitor-b.com"
+    keywords:
+      - "競合Bキーワード1"
+      - "競合Bキーワード2"
+
+  - name: "競合C社"
+    domain: "competitor-c.com"
+    keywords:
+      - "競合Cキーワード1"
+      - "競合Cキーワード2"
+
+# 監視対象カテゴリ
+categories:
+  - "マーケティングツール"
+  - "営業支援"
+  - "顧客管理"
+
+# 監視プロンプト（カスタム）
+custom_prompts:
+  - category: "comparison"
+    template: "マーケティングツールでおすすめの会社を5つ教えて。それぞれのメリット・デメリットも"
+    is_active: true
+
+  - category: "problem_solving"
+    template: "マーケティングのコストを削減したい。どんなアプローチやサービスがある？"
+    is_active: true
+
+  - category: "reputation"
+    template: "{brand_name}の評判や、導入に向いている企業の特徴は？"
+    is_active: true

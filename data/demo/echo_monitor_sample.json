@@ -1,0 +1,130 @@
+{
+  "timeline_data": [
+    {
+      "date": "2026-03-09",
+      "mention_count": 0,
+      "sentiment_score": null,
+      "reference_rank": null,
+      "query": "マーケティングツール おすすめ"
+    },
+    {
+      "date": "2026-03-16",
+      "mention_count": 0,
+      "sentiment_score": null,
+      "reference_rank": null,
+      "query": "マーケティングツール おすすめ"
+    },
+    {
+      "date": "2026-03-23",
+      "mention_count": 1,
+      "sentiment_score": 0.2,
+      "reference_rank": 8,
+      "query": "マーケティングツール おすすめ"
+    },
+    {
+      "date": "2026-03-30",
+      "mention_count": 1,
+      "sentiment_score": 0.35,
+      "reference_rank": 6,
+      "query": "マーケティングツール おすすめ"
+    },
+    {
+      "date": "2026-04-06",
+      "mention_count": 2,
+      "sentiment_score": 0.55,
+      "reference_rank": 4,
+      "query": "マーケティングツール おすすめ"
+    },
+    {
+      "date": "2026-04-09",
+      "mention_count": 2,
+      "sentiment_score": 0.68,
+      "reference_rank": 3,
+      "query": "マーケティングツール おすすめ"
+    }
+  ],
+  "current_status": {
+    "mention_count": 2,
+    "sentiment_score": 0.68,
+    "reference_rank": 3,
+    "llm_coverage": {
+      "ChatGPT": true,
+      "Gemini": true,
+      "Claude": false,
+      "Perplexity": false
+    },
+    "echo_success": "部分成功"
+  },
+  "recent_citations": [
+    {
+      "citation_id": "cite_001",
+      "query_text": "マーケティングツール おすすめ",
+      "entity_name": "自社ツール",
+      "mention_count": 1,
+      "sentiment_score": 0.7,
+      "reference_type": "ChatGPT",
+      "source_url": "https://example.com/pricing",
+      "reference_rank": 3,
+      "context_snippet": "中小企業向けマーケティングツールとして、自社ツールは使いやすさと価格面で優位性があります。",
+      "created_at": "2026-04-09T10:30:00"
+    },
+    {
+      "citation_id": "cite_002",
+      "query_text": "マーケティングツール 料金比較",
+      "entity_name": "自社ツール",
+      "mention_count": 1,
+      "sentiment_score": 0.5,
+      "reference_type": "Gemini",
+      "source_url": "https://example.com/pricing",
+      "reference_rank": 5,
+      "context_snippet": "自社ツールは競合と比較して価格が手頃ですが、機能面では一部制限があります。",
+      "created_at": "2026-04-08T15:20:00"
+    },
+    {
+      "citation_id": "cite_003",
+      "query_text": "中小企業 マーケティング",
+      "entity_name": "自社ツール",
+      "mention_count": 1,
+      "sentiment_score": 0.8,
+      "reference_type": "ChatGPT",
+      "source_url": "https://example.com/",
+      "reference_rank": 2,
+      "context_snippet": "自社ツールは中小企業に特化しており、導入支援が充実しています。",
+      "created_at": "2026-04-07T09:15:00"
+    },
+    {
+      "citation_id": "cite_004",
+      "query_text": "マーケティングオートメーション 比較",
+      "entity_name": "自社ツール",
+      "mention_count": 1,
+      "sentiment_score": 0.4,
+      "reference_type": "Gemini",
+      "source_url": "https://example.com/features",
+      "reference_rank": 7,
+      "context_snippet": "自社ツールは基本機能を備えていますが、高度な機能は他社が優位です。",
+      "created_at": "2026-04-06T14:45:00"
+    },
+    {
+      "citation_id": "cite_005",
+      "query_text": "無料 マーケティングツール",
+      "entity_name": "自社ツール",
+      "mention_count": 1,
+      "sentiment_score": 0.9,
+      "reference_type": "ChatGPT",
+      "source_url": "https://example.com/free-trial",
+      "reference_rank": 1,
+      "context_snippet": "無料トライアル期間が30日間と長く、自社ツールは試しやすいのが魅力です。",
+      "created_at": "2026-04-05T11:30:00"
+    }
+  ],
+  "sentiment_distribution": {
+    "positive": 3,
+    "neutral": 1,
+    "negative": 1
+  },
+  "reference_rank_distribution": {
+    "top_3": 2,
+    "top_5": 1,
+    "top_10": 2
+  }
+}

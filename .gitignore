@@ -1,0 +1,48 @@
+# 環境変数（機密情報）
+.env
+.env.local
+.env.*.local
+
+# Streamlit secrets（機密情報）
+.streamlit/secrets.toml
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+.venv/
+
+# データベース
+data/*.db
+*.sqlite
+*.sqlite3
+
+# ログ
+logs/
+*.log
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Vercel
+.vercel
+
+# Node
+node_modules/
+
+# その他
+*.bak
+*.tmp
+
+.vercel

@@ -1,0 +1,130 @@
+# GEOスコアリングツール v2.0 依存パッケージ
+
+# ========================================
+# v1.0 継承（既存パッケージ）
+# ========================================
+
+# Gemini API連携
+google-genai>=1.0.0
+pydantic>=2.0.0
+
+# データベース
+sqlalchemy>=2.0.0
+psycopg2-binary>=2.9.0  # PostgreSQLドライバ
+
+# ダッシュボード
+streamlit>=1.30.0
+plotly>=5.18.0
+
+# データ処理
+pandas>=2.0.0
+pyyaml>=6.0.0
+
+# 環境変数
+python-dotenv>=1.0.0
+
+# スケジューラー
+apscheduler>=3.10.0
+
+# ========================================
+# v2.0 新規追加
+# ========================================
+
+# 外部API連携
+# ------------
+# Serp API（AI検索結果取得）
+serpapi>=0.1.5
+# requests（汎用HTTP通信）
+requests>=2.31.0
+# httpx（非同期HTTP）
+httpx>=0.27.0
+
+# v2.1 追加: LLM API連携
+# ---------------------
+# OpenAI API（ChatGPT o1）
+openai>=1.12.0
+# Anthropic API（Claude）
+anthropic>=0.18.0
+
+# BigQuery連携
+# ------------
+google-cloud-bigquery>=3.14.0
+google-cloud-storage>=2.14.0
+db-dtypes>=1.2.0  # BigQuery型サポート
+
+# Google Workspace連携
+# -------------------
+google-api-python-client>=2.100.0
+google-auth>=2.24.0
+google-auth-httplib2>=0.2.0
+google-auth-oauthlib>=1.1.0
+
+# LangChain / エージェント開発
+# ---------------------------
+langchain>=0.1.0
+langchain-anthropic>=0.1.0
+langgraph>=0.0.20
+
+# コンテンツ生成
+# ------------
+jinja2>=3.1.2
+markdown>=3.5.0
+beautifulsoup4>=4.12.0
+
+# データ分析
+# ----------
+numpy>=1.24.0
+scipy>=1.11.0
+scikit-learn>=1.3.0
+
+# 非同期処理
+# ----------
+asyncio>=3.4.3
+aiofiles>=23.2.0
+
+# テスト
+# ------
+pytest>=7.4.0
+pytest-asyncio>=0.21.0
+pytest-cov>=4.1.0
+pytest-mock>=3.12.0
+
+# コード品質
+# ----------
+black>=23.9.0
+flake8>=6.1.0
+mypy>=1.5.0
+isort>=5.12.0
+
+# ロギング・モニタリング
+# --------------------
+structlog>=23.2.0
+sentry-sdk>=1.35.0
+
+# ユーティリティ
+# -------------
+python-slugify>=8.0.0
+pytz>=2023.3
+tenacity>=8.2.0  # リトライ機構
+
+# 開発ツール
+# ----------
+ipython>=8.16.0
+jupyter>=1.0.0
+
+# ========================================
+# オプショナル（高度な機能用）
+# ========================================
+
+# Screaming Frog 連携（Selenium経由）
+# selenium>=4.15.0
+# webdriver-manager>=4.0.0
+
+# 画像処理（OGP生成等）
+# pillow>=10.1.0
+
+# PDF生成（レポート出力）
+# reportlab>=4.0.0
+
+# Excel出力（拡張）
+# openpyxl>=3.1.0

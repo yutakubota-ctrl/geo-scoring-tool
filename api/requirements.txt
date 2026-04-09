@@ -1,0 +1,2 @@
+# Vercel Python Functions 用依存パッケージ
+google-genai>=1.0.0

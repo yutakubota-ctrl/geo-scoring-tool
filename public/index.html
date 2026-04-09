@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GEOスコアリングダッシュボード</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .score-card {
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .score-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        .loading {
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        .demo-badge {
+            animation: bounce 1s infinite;
+        }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- ヘッダー -->
+    <header class="bg-blue-600 text-white shadow-lg">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <div>
+                <h1 class="text-2xl font-bold">GEOスコアリングダッシュボード</h1>
+                <p class="text-blue-100">AI検索エンジンにおけるブランド認知度・推奨度を分析</p>
+            </div>
+            <div class="flex items-center gap-3">
+                <a href="/guide.html"
+                    class="bg-white text-blue-600 px-4 py-2 rounded-lg font-semibold hover:bg-blue-50 transition-colors">
+                    📖 スコア解説
+                </a>
+                <button onclick="runDemo()"
+                    class="demo-badge bg-yellow-400 text-yellow-900 px-4 py-2 rounded-lg font-semibold hover:bg-yellow-300 transition-colors flex items-center gap-2">
+                    <span>▶</span> デモを見る
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 py-8">
+        <!-- デモバナー -->
+        <div id="demoBanner" class="hidden bg-yellow-100 border border-yellow-300 rounded-lg p-4 mb-6 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <span class="text-2xl">🎯</span>
+                <div>
+                    <p class="font-semibold text-yellow-800">デモモード</p>
+                    <p class="text-sm text-yellow-700">サンプルデータを表示しています</p>
+                </div>
+            </div>
+            <button onclick="closeDemoBanner()" class="text-yellow-600 hover:text-yellow-800">✕</button>
+        </div>
+
+        <!-- タブナビゲーション -->
+        <div class="flex border-b border-gray-200 mb-6">
+            <button onclick="showTab('scoring')" id="tabScoring"
+                class="px-6 py-3 text-blue-600 border-b-2 border-blue-600 font-medium">
+                スコアリング
+            </button>
+            <button onclick="showTab('comparison')" id="tabComparison"
+                class="px-6 py-3 text-gray-500 hover:text-gray-700 font-medium">
+                競合比較
+            </button>
+            <button onclick="showTab('history')" id="tabHistory"
+                class="px-6 py-3 text-gray-500 hover:text-gray-700 font-medium">
+                履歴・トレンド
+            </button>
+        </div>
+
+        <!-- スコアリングタブ -->
+        <div id="tabContentScoring">
+            <!-- スコアリング入力フォーム -->
+            <section class="bg-white rounded-lg shadow-md p-6 mb-8">
+                <h2 class="text-xl font-semibold mb-4">スコアリング実行</h2>
+                <form id="scoringForm" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">検索クエリ</label>
+                        <input type="text" id="query" required
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            placeholder="例: おすすめのCRMツールは？">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">AI応答（評価対象）</label>
+                        <textarea id="aiResponse" rows="4" required
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            placeholder="AIが生成した応答をここに貼り付け"></textarea>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">評価対象ブランド名</label>
+                            <input type="text" id="brandName" required
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                placeholder="例: Salesforce">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">参照情報（任意）</label>
+                            <input type="text" id="referenceInfo"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                placeholder="正確性検証用の情報（任意）">
+                        </div>
+                    </div>
+                    <div class="flex gap-4">
+                        <button type="submit" id="submitBtn"
+                            class="flex-1 bg-blue-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
+                            スコアリング実行
+                        </button>
+                        <button type="button" onclick="fillSampleData()"
+                            class="bg-gray-200 text-gray-700 py-3 px-6 rounded-lg font-semibold hover:bg-gray-300 transition-colors">
+                            サンプル入力
+                        </button>
+                    </div>
+                </form>
+            </section>
+
+            <!-- 結果表示エリア -->
+            <section id="results" class="hidden">
+                <!-- スコアカード -->
+                <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
+                    <div class="score-card bg-white rounded-lg shadow-md p-4 text-center">
+                        <div class="text-3xl font-bold text-blue-600" id="totalScore">--</div>
+                        <div class="text-sm text-gray-500">総合スコア</div>
+                        <div class="text-xs text-gray-400">/100点</div>
+                    </div>
+                    <div class="score-card bg-white rounded-lg shadow-md p-4 text-center">
+                        <div class="text-2xl font-bold text-green-600" id="visibilityScore">--</div>
+                        <div class="text-sm text-gray-500">認知</div>
+                        <div class="text-xs text-gray-400">/10点</div>
+                    </div>
+                    <div class="score-card bg-white rounded-lg shadow-md p-4 text-center">
+                        <div class="text-2xl font-bold text-purple-600" id="sentimentScore">--</div>
+                        <div class="text-sm text-gray-500">推奨度</div>
+                        <div class="text-xs text-gray-400">-10〜30点</div>
+                    </div>
+                    <div class="score-card bg-white rounded-lg shadow-md p-4 text-center">
+                        <div class="text-2xl font-bold text-orange-600" id="positioningScore">--</div>
+                        <div class="text-sm text-gray-500">ポジション</div>
+                        <div class="text-xs text-gray-400">/20点</div>
+                    </div>
+                    <div class="score-card bg-white rounded-lg shadow-md p-4 text-center">
+                        <div class="text-2xl font-bold text-red-600" id="accuracyScore">--</div>
+                        <div class="text-sm text-gray-500">正確性</div>
+                        <div class="text-xs text-gray-400">/40点</div>
+                    </div>
+                </div>
+
+                <!-- グラフ -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h3 class="text-lg font-semibold mb-4">指標別スコア</h3>
+                        <canvas id="radarChart"></canvas>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h3 class="text-lg font-semibold mb-4">達成率</h3>
+                        <canvas id="barChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- 根拠説明 -->
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-lg font-semibold mb-4">スコアリングの根拠</h3>
+                    <div id="reasoning" class="text-gray-700 whitespace-pre-wrap"></div>
+                </div>
+            </section>
+
+            <!-- ローディング表示 -->
+            <div id="loading" class="hidden text-center py-12">
+                <div class="loading inline-block">
+                    <svg class="animate-spin h-12 w-12 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                </div>
+                <p class="mt-4 text-gray-600">スコアリング中...</p>
+            </div>
+
+            <!-- エラー表示 -->
+            <div id="error" class="hidden bg-red-50 border border-red-200 rounded-lg p-6 text-center">
+                <p class="text-red-600 font-semibold">エラーが発生しました</p>
+                <p id="errorMessage" class="text-red-500 mt-2"></p>
+            </div>
+        </div>
+
+        <!-- 競合比較タブ -->
+        <div id="tabContentComparison" class="hidden">
+            <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+                <h2 class="text-xl font-semibold mb-4">競合ブランド比較</h2>
+                <p class="text-gray-600 mb-6">同じ検索クエリに対する複数ブランドのスコアを比較</p>
+
+                <!-- 競合比較テーブル -->
+                <div class="overflow-x-auto">
+                    <table class="w-full" id="comparisonTable">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-4 py-3 text-left text-sm font-semibold text-gray-600">ブランド</th>
+                                <th class="px-4 py-3 text-center text-sm font-semibold text-gray-600">総合</th>
+                                <th class="px-4 py-3 text-center text-sm font-semibold text-gray-600">認知</th>
+                                <th class="px-4 py-3 text-center text-sm font-semibold text-gray-600">推奨度</th>
+                                <th class="px-4 py-3 text-center text-sm font-semibold text-gray-600">ポジション</th>
+                                <th class="px-4 py-3 text-center text-sm font-semibold text-gray-600">正確性</th>
+                                <th class="px-4 py-3 text-center text-sm font-semibold text-gray-600">状態</th>
+                            </tr>
+                        </thead>
+                        <tbody id="comparisonBody">
+                            <!-- デモデータが入る -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 競合比較グラフ -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-lg font-semibold mb-4">競合レーダーチャート</h3>
+                    <canvas id="comparisonRadar"></canvas>
+                </div>
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-lg font-semibold mb-4">総合スコアランキング</h3>
+                    <canvas id="rankingChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- 履歴・トレンドタブ -->
+        <div id="tabContentHistory" class="hidden">
+            <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+                <h2 class="text-xl font-semibold mb-4">スコア推移（過去90日）</h2>
+                <canvas id="trendChart" height="100"></canvas>
+            </div>
+
+            <!-- 統計サマリー -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                <div class="bg-white rounded-lg shadow-md p-4">
+                    <div class="text-sm text-gray-500">平均スコア</div>
+                    <div class="text-2xl font-bold text-blue-600" id="avgScore">72.5</div>
+                    <div class="text-xs text-green-500">↑ +5.2 前月比</div>
+                </div>
+                <div class="bg-white rounded-lg shadow-md p-4">
+                    <div class="text-sm text-gray-500">認知率</div>
+                    <div class="text-2xl font-bold text-green-600" id="visibilityRate">85%</div>
+                    <div class="text-xs text-green-500">↑ +3% 前月比</div>
+                </div>
+                <div class="bg-white rounded-lg shadow-md p-4">
+                    <div class="text-sm text-gray-500">推奨度平均</div>
+                    <div class="text-2xl font-bold text-purple-600" id="sentimentAvg">+18</div>
+                    <div class="text-xs text-green-500">↑ +2 前月比</div>
+                </div>
+                <div class="bg-white rounded-lg shadow-md p-4">
+                    <div class="text-sm text-gray-500">競合順位</div>
+                    <div class="text-2xl font-bold text-orange-600" id="competitorRank">2位/5</div>
+                    <div class="text-xs text-gray-400">変動なし</div>
+                </div>
+            </div>
+
+            <!-- アラート -->
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h3 class="text-lg font-semibold mb-4">アラート・通知</h3>
+                <div class="space-y-3" id="alertList">
+                    <div class="flex items-center gap-3 p-3 bg-green-50 rounded-lg">
+                        <span class="text-green-500">✓</span>
+                        <span class="text-green-700">認知率が目標の80%を超えました</span>
+                    </div>
+                    <div class="flex items-center gap-3 p-3 bg-yellow-50 rounded-lg">
+                        <span class="text-yellow-500">⚠</span>
+                        <span class="text-yellow-700">競合Bがスコアを10点上げています（要注意）</span>
+                    </div>
+                    <div class="flex items-center gap-3 p-3 bg-blue-50 rounded-lg">
+                        <span class="text-blue-500">ℹ</span>
+                        <span class="text-blue-700">先週のバッチ処理が完了しました（15件評価）</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 使い方 -->
+        <section class="mt-12 bg-blue-50 rounded-lg p-6">
+            <h2 class="text-xl font-semibold mb-4">使い方</h2>
+            <ol class="list-decimal list-inside space-y-2 text-gray-700">
+                <li>検索クエリを入力（例: 「おすすめのプロジェクト管理ツールは？」）</li>
+                <li>AI検索エンジン（Gemini、ChatGPT等）の応答をコピー&ペースト</li>
+                <li>評価したいブランド名を入力</li>
+                <li>「スコアリング実行」ボタンをクリック</li>
+            </ol>
+            <div class="mt-4 p-4 bg-white rounded-lg">
+                <h3 class="font-semibold mb-2">評価指標の説明</h3>
+                <ul class="text-sm text-gray-600 space-y-1">
+                    <li><span class="font-medium text-green-600">認知 (0-10):</span> ブランドが言及されているか</li>
+                    <li><span class="font-medium text-purple-600">推奨度 (-10〜30):</span> どのように推奨されているか</li>
+                    <li><span class="font-medium text-orange-600">ポジション (0-20):</span> 回答内での位置づけ</li>
+                    <li><span class="font-medium text-red-600">正確性 (0-40):</span> 情報の正確さ</li>
+                </ul>
+            </div>
+        </section>
+    </main>
+
+    <!-- フッター -->
+    <footer class="bg-gray-800 text-white py-6 mt-12">
+        <div class="container mx-auto px-4 text-center">
+            <p class="text-gray-400">GEOスコアリングツール v1.0</p>
+        </div>
+    </footer>
+
+    <script>
+        // グラフインスタンス
+        let radarChart = null;
+        let barChart = null;
+        let comparisonRadar = null;
+        let rankingChart = null;
+        let trendChart = null;
+
+        // デモデータ
+        const demoData = {
+            ownBrand: {
+                name: "自社ブランド（例: Salesforce）",
+                visibility_score: 10,
+                sentiment_score: 25,
+                positioning_score: 15,
+                accuracy_score: 35,
+                total_score: 85,
+                reasoning: `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📊 GEOスコアリング詳細レポート
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+■ 評価対象: Salesforce
+■ 検索クエリ: 「おすすめのCRMツールを教えてください」
+■ 総合スコア: 85/100点 【優秀】
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+【1】認知スコア: 10/10点 ✅ 満点
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+▶ 判定結果: ブランド名が明確に言及されている
+
+📌 検出箇所:
+   「1. **Salesforce** - 世界最大のCRMプラットフォームで...」
+
+📌 分析:
+   • ブランド名「Salesforce」が応答文中に1回以上出現
+   • 太字（**）で強調されており、視認性が高い
+   • 正式名称で言及（略称ではない）
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+【2】推奨度スコア: 25/30点 ⭐ やや肯定的〜強く肯定的
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+▶ 判定結果: 肯定的な文脈で推奨されている
+
+📌 肯定的な表現の検出:
+   ✓「世界最大の」→ 規模・信頼性を示す最上級表現
+   ✓「業界標準として広く認知」→ 権威性の強調
+   ✓「高度なカスタマイズ性」→ 機能的な優位性
+   ✓「AIを活用したEinstein機能」→ 先進性のアピール
+
+📌 減点要因:
+   △ 「大企業向け」という限定的な表現（-5点）
+     → 中小企業ユーザーには不向きという印象を与える可能性
+
+📌 感情分析の内訳:
+   • ポジティブワード: 4個
+   • ネガティブワード: 0個
+   • 中立ワード: 2個
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+【3】ポジションスコア: 15/20点 📍 上位（2-3番目）
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+▶ 判定結果: リストの最上位（1番目）で言及
+
+📌 位置分析:
+   • 言及位置: リストの1番目 ★
+   • 全体の構成: 4ブランドのリスト形式
+   • 相対的な位置: 最優先で紹介
+
+📌 詳細:
+   回答は「1. Salesforce → 2. HubSpot → 3. Zoho CRM → 4. Microsoft Dynamics」
+   の順序で構成されており、Salesforceが最初に推薦されています。
+
+📌 減点要因:
+   △ 「最もおすすめ」という明示的な推奨文言がない（-5点）
+     → 単純なリスト順序だけでは最強の推薦とは言えない
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+【4】正確性スコア: 35/40点 📋 概ね正確
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+▶ 判定結果: 主要情報は正確、細部に改善の余地あり
+
+📌 正確な情報:
+   ✓「世界最大のCRMプラットフォーム」→ 正確（市場シェア1位）
+   ✓「業界標準として広く認知」→ 正確
+   ✓「高度なカスタマイズ性」→ 正確（AppExchange等）
+   ✓「AIを活用したEinstein機能」→ 正確
+
+📌 要検証・改善が必要な情報:
+   ⚠️「月額$25〜」
+     → 参照情報によると、Essentialsプランは$25/ユーザー/月だが、
+       2024年以降の価格改定で変更の可能性あり
+     → 減点: -5点
+
+📌 未言及の重要情報:
+   △ Einstein GPT（生成AI機能）への言及なし
+     → 最新機能の説明が不足
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📈 改善提案
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+1. 【推奨度向上】中小企業向けのプランや事例も公式サイトで訴求する
+2. 【ポジション向上】「No.1 CRM」などの明確な訴求をコンテンツに追加
+3. 【正確性向上】最新の価格情報とEinstein GPT機能の情報を更新
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🔗 関連リンク: スコア算定ロジックの詳細は「スコア解説」ページをご覧ください
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`
+            },
+            competitors: [
+                { name: "競合A（例: HubSpot）", visibility_score: 10, sentiment_score: 20, positioning_score: 10, accuracy_score: 30, total_score: 70 },
+                { name: "競合B（例: Zoho CRM）", visibility_score: 10, sentiment_score: 15, positioning_score: 5, accuracy_score: 35, total_score: 65 },
+                { name: "競合C（例: Microsoft Dynamics）", visibility_score: 10, sentiment_score: 18, positioning_score: 10, accuracy_score: 32, total_score: 70 },
+                { name: "競合D（例: Pipedrive）", visibility_score: 0, sentiment_score: 0, positioning_score: 0, accuracy_score: 0, total_score: 0 }
+            ],
+            trend: [
+                { date: '2024-01', score: 65 },
+                { date: '2024-02', score: 68 },
+                { date: '2024-03', score: 70 },
+                { date: '2024-04', score: 72 },
+                { date: '2024-05', score: 75 },
+                { date: '2024-06', score: 73 },
+                { date: '2024-07', score: 78 },
+                { date: '2024-08', score: 80 },
+                { date: '2024-09', score: 82 },
+                { date: '2024-10', score: 85 }
+            ]
+        };
+
+        // サンプルデータを入力フォームに埋める
+        function fillSampleData() {
+            document.getElementById('query').value = 'おすすめのCRMツールを教えてください';
+            document.getElementById('aiResponse').value = `CRMツールのおすすめをご紹介します。
+
+1. **Salesforce** - 世界最大のCRMプラットフォームで、業界標準として広く認知されています。大企業向けの高度なカスタマイズ性と、AIを活用したEinstein機能が特徴です。月額$25〜。
+
+2. **HubSpot** - 使いやすさに定評があり、無料プランも充実しています。マーケティング、セールス、カスタマーサービスを一元管理できます。
+
+3. **Zoho CRM** - コストパフォーマンスに優れ、中小企業に人気があります。日本語サポートも充実しています。
+
+4. **Microsoft Dynamics 365** - Microsoft製品との連携が強み。Office365ユーザーにおすすめです。
+
+選び方のポイント：
+- 企業規模に合ったプランを選ぶ
+- 既存システムとの連携を確認
+- サポート体制を重視する`;
+            document.getElementById('brandName').value = 'Salesforce';
+            document.getElementById('referenceInfo').value = 'Salesforceは2024年にEinstein GPTを発表。月額は$25〜$300/ユーザー';
+        }
+
+        // デモ実行
+        function runDemo() {
+            // デモバナー表示
+            document.getElementById('demoBanner').classList.remove('hidden');
+
+            // スコアリングタブに結果を表示
+            showTab('scoring');
+            displayResults(demoData.ownBrand);
+
+            // 競合比較データを表示
+            renderComparisonTable();
+            renderComparisonCharts();
+
+            // トレンドチャートを表示
+            renderTrendChart();
+        }
+
+        function closeDemoBanner() {
+            document.getElementById('demoBanner').classList.add('hidden');
+        }
+
+        // タブ切り替え
+        function showTab(tabName) {
+            // すべてのタブコンテンツを非表示
+            document.getElementById('tabContentScoring').classList.add('hidden');
+            document.getElementById('tabContentComparison').classList.add('hidden');
+            document.getElementById('tabContentHistory').classList.add('hidden');
+
+            // すべてのタブボタンのスタイルをリセット
+            document.getElementById('tabScoring').className = 'px-6 py-3 text-gray-500 hover:text-gray-700 font-medium';
+            document.getElementById('tabComparison').className = 'px-6 py-3 text-gray-500 hover:text-gray-700 font-medium';
+            document.getElementById('tabHistory').className = 'px-6 py-3 text-gray-500 hover:text-gray-700 font-medium';
+
+            // 選択されたタブを表示
+            if (tabName === 'scoring') {
+                document.getElementById('tabContentScoring').classList.remove('hidden');
+                document.getElementById('tabScoring').className = 'px-6 py-3 text-blue-600 border-b-2 border-blue-600 font-medium';
+            } else if (tabName === 'comparison') {
+                document.getElementById('tabContentComparison').classList.remove('hidden');
+                document.getElementById('tabComparison').className = 'px-6 py-3 text-blue-600 border-b-2 border-blue-600 font-medium';
+                renderComparisonCharts();
+            } else if (tabName === 'history') {
+                document.getElementById('tabContentHistory').classList.remove('hidden');
+                document.getElementById('tabHistory').className = 'px-6 py-3 text-blue-600 border-b-2 border-blue-600 font-medium';
+                renderTrendChart();
+            }
+        }
+
+        // 競合比較テーブルを描画
+        function renderComparisonTable() {
+            const tbody = document.getElementById('comparisonBody');
+            const allBrands = [demoData.ownBrand, ...demoData.competitors];
+
+            // スコア順にソート
+            allBrands.sort((a, b) => b.total_score - a.total_score);
+
+            tbody.innerHTML = allBrands.map((brand, index) => {
+                const isOwn = brand.name.includes('自社');
+                const statusColor = brand.total_score >= 70 ? 'text-green-500' : brand.total_score >= 40 ? 'text-yellow-500' : 'text-red-500';
+                const statusText = brand.total_score >= 70 ? '良好' : brand.total_score >= 40 ? '要改善' : '要注意';
+
+                return `
+                    <tr class="${isOwn ? 'bg-blue-50' : ''} border-b">
+                        <td class="px-4 py-3">
+                            <span class="font-medium ${isOwn ? 'text-blue-600' : ''}">${brand.name}</span>
+                            ${isOwn ? '<span class="ml-2 text-xs bg-blue-100 text-blue-600 px-2 py-1 rounded">自社</span>' : ''}
+                        </td>
+                        <td class="px-4 py-3 text-center font-bold">${brand.total_score}</td>
+                        <td class="px-4 py-3 text-center">${brand.visibility_score}</td>
+                        <td class="px-4 py-3 text-center">${brand.sentiment_score}</td>
+                        <td class="px-4 py-3 text-center">${brand.positioning_score}</td>
+                        <td class="px-4 py-3 text-center">${brand.accuracy_score}</td>
+                        <td class="px-4 py-3 text-center ${statusColor}">${statusText}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // 競合比較チャートを描画
+        function renderComparisonCharts() {
+            // 既存のグラフを破棄
+            if (comparisonRadar) comparisonRadar.destroy();
+            if (rankingChart) rankingChart.destroy();
+
+            const allBrands = [demoData.ownBrand, ...demoData.competitors];
+            const colors = [
+                'rgba(59, 130, 246, 0.7)',   // 青（自社）
+                'rgba(34, 197, 94, 0.7)',    // 緑
+                'rgba(249, 115, 22, 0.7)',   // オレンジ
+                'rgba(168, 85, 247, 0.7)',   // 紫
+                'rgba(239, 68, 68, 0.7)'     // 赤
+            ];
+
+            // レーダーチャート
+            const radarCtx = document.getElementById('comparisonRadar');
+            if (radarCtx) {
+                comparisonRadar = new Chart(radarCtx.getContext('2d'), {
+                    type: 'radar',
+                    data: {
+                        labels: ['認知', '推奨度', 'ポジション', '正確性'],
+                        datasets: allBrands.filter(b => b.total_score > 0).map((brand, i) => ({
+                            label: brand.name.split('（')[0],
+                            data: [
+                                (brand.visibility_score / 10) * 100,
+                                ((brand.sentiment_score + 10) / 40) * 100,
+                                (brand.positioning_score / 20) * 100,
+                                (brand.accuracy_score / 40) * 100
+                            ],
+                            backgroundColor: colors[i].replace('0.7', '0.2'),
+                            borderColor: colors[i],
+                            borderWidth: 2
+                        }))
+                    },
+                    options: {
+                        scales: {
+                            r: { beginAtZero: true, max: 100 }
+                        }
+                    }
+                });
+            }
+
+            // ランキングチャート
+            const rankingCtx = document.getElementById('rankingChart');
+            if (rankingCtx) {
+                const sortedBrands = [...allBrands].sort((a, b) => b.total_score - a.total_score);
+                rankingChart = new Chart(rankingCtx.getContext('2d'), {
+                    type: 'bar',
+                    data: {
+                        labels: sortedBrands.map(b => b.name.split('（')[0]),
+                        datasets: [{
+                            label: '総合スコア',
+                            data: sortedBrands.map(b => b.total_score),
+                            backgroundColor: sortedBrands.map((b, i) =>
+                                b.name.includes('自社') ? 'rgba(59, 130, 246, 0.7)' : 'rgba(156, 163, 175, 0.7)'
+                            ),
+                            borderColor: sortedBrands.map((b, i) =>
+                                b.name.includes('自社') ? 'rgba(59, 130, 246, 1)' : 'rgba(156, 163, 175, 1)'
+                            ),
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        indexAxis: 'y',
+                        scales: {
+                            x: { beginAtZero: true, max: 100 }
+                        }
+                    }
+                });
+            }
+        }
+
+        // トレンドチャートを描画
+        function renderTrendChart() {
+            if (trendChart) trendChart.destroy();
+
+            const trendCtx = document.getElementById('trendChart');
+            if (trendCtx) {
+                trendChart = new Chart(trendCtx.getContext('2d'), {
+                    type: 'line',
+                    data: {
+                        labels: demoData.trend.map(t => t.date),
+                        datasets: [{
+                            label: '総合スコア',
+                            data: demoData.trend.map(t => t.score),
+                            borderColor: 'rgba(59, 130, 246, 1)',
+                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                            fill: true,
+                            tension: 0.3
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            y: { beginAtZero: false, min: 50, max: 100 }
+                        }
+                    }
+                });
+            }
+        }
+
+        // フォーム送信処理
+        document.getElementById('scoringForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            // UI状態の更新
+            document.getElementById('results').classList.add('hidden');
+            document.getElementById('error').classList.add('hidden');
+            document.getElementById('loading').classList.remove('hidden');
+            document.getElementById('submitBtn').disabled = true;
+            document.getElementById('submitBtn').textContent = '処理中...';
+
+            try {
+                // リクエストデータの構築
+                const requestData = {
+                    query: document.getElementById('query').value,
+                    ai_response: document.getElementById('aiResponse').value,
+                    brand_name: document.getElementById('brandName').value,
+                    reference_info: document.getElementById('referenceInfo').value || null
+                };
+
+                // API呼び出し（完全ステートレス）
+                const response = await fetch('/api/score', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(requestData)
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || 'APIエラー');
+                }
+
+                const result = await response.json();
+
+                // 結果を表示
+                displayResults(result);
+
+            } catch (error) {
+                // エラー表示
+                document.getElementById('loading').classList.add('hidden');
+                document.getElementById('error').classList.remove('hidden');
+                document.getElementById('errorMessage').textContent = error.message;
+            } finally {
+                document.getElementById('submitBtn').disabled = false;
+                document.getElementById('submitBtn').textContent = 'スコアリング実行';
+            }
+        });
+
+        // 結果表示関数
+        function displayResults(result) {
+            document.getElementById('loading').classList.add('hidden');
+            document.getElementById('results').classList.remove('hidden');
+
+            // スコア表示
+            document.getElementById('totalScore').textContent = result.total_score;
+            document.getElementById('visibilityScore').textContent = result.visibility_score;
+            document.getElementById('sentimentScore').textContent = result.sentiment_score;
+            document.getElementById('positioningScore').textContent = result.positioning_score;
+            document.getElementById('accuracyScore').textContent = result.accuracy_score;
+
+            // 根拠表示
+            document.getElementById('reasoning').textContent = result.reasoning;
+
+            // グラフ描画
+            drawCharts(result);
+        }
+
+        // グラフ描画関数
+        function drawCharts(result) {
+            // 既存のグラフを破棄
+            if (radarChart) radarChart.destroy();
+            if (barChart) barChart.destroy();
+
+            // 正規化されたスコア（0-100%）
+            const normalizedScores = {
+                visibility: (result.visibility_score / 10) * 100,
+                sentiment: ((result.sentiment_score + 10) / 40) * 100,
+                positioning: (result.positioning_score / 20) * 100,
+                accuracy: (result.accuracy_score / 40) * 100
+            };
+
+            // レーダーチャート
+            const radarCtx = document.getElementById('radarChart').getContext('2d');
+            radarChart = new Chart(radarCtx, {
+                type: 'radar',
+                data: {
+                    labels: ['認知', '推奨度', 'ポジション', '正確性'],
+                    datasets: [{
+                        label: 'スコア',
+                        data: [
+                            normalizedScores.visibility,
+                            normalizedScores.sentiment,
+                            normalizedScores.positioning,
+                            normalizedScores.accuracy
+                        ],
+                        backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                        borderColor: 'rgba(59, 130, 246, 1)',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    scales: {
+                        r: {
+                            beginAtZero: true,
+                            max: 100
+                        }
+                    }
+                }
+            });
+
+            // 棒グラフ
+            const barCtx = document.getElementById('barChart').getContext('2d');
+            barChart = new Chart(barCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['認知', '推奨度', 'ポジション', '正確性'],
+                    datasets: [{
+                        label: '達成率 (%)',
+                        data: [
+                            normalizedScores.visibility,
+                            normalizedScores.sentiment,
+                            normalizedScores.positioning,
+                            normalizedScores.accuracy
+                        ],
+                        backgroundColor: [
+                            'rgba(34, 197, 94, 0.7)',
+                            'rgba(168, 85, 247, 0.7)',
+                            'rgba(249, 115, 22, 0.7)',
+                            'rgba(239, 68, 68, 0.7)'
+                        ],
+                        borderColor: [
+                            'rgba(34, 197, 94, 1)',
+                            'rgba(168, 85, 247, 1)',
+                            'rgba(249, 115, 22, 1)',
+                            'rgba(239, 68, 68, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100
+                        }
+                    }
+                }
+            });
+        }
+
+        // ページ読み込み時に競合比較テーブルを初期化
+        document.addEventListener('DOMContentLoaded', () => {
+            renderComparisonTable();
+        });
+    </script>
+</body>
+</html>
