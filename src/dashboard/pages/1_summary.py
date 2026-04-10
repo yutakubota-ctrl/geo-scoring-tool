@@ -30,7 +30,7 @@ from src.dashboard.styles.common import (
     COLORS,
     PLOTLY_COLORS
 )
-from src.dashboard.components.demo_toggle import render_demo_toggle
+from src.dashboard.components.demo_toggle import render_demo_toggle, is_demo_mode_active
 
 st.set_page_config(page_title="サマリー - GEOスコアリング", page_icon=None, layout="wide")
 
@@ -46,19 +46,56 @@ st.markdown(get_page_header(
     "経営層向けの概要ダッシュボード - 総合スコア、競合比較、アラート"
 ), unsafe_allow_html=True)
 
-# データ取得
-with db.get_session() as session:
-    own_brand = BrandRepository.get_own_brand(session)
-    competitors = BrandRepository.get_competitors(session)
+# デモモード対応: データ取得
+if is_demo_mode_active():
+    # デモモード: ダミーデータを作成
+    class DemoBrand:
+        def __init__(self, brand_id, name, is_own=False):
+            self.id = brand_id
+            self.name = name
+            self.is_own = is_own
 
-    if own_brand:
-        # 自社の最新スコアと平均
-        latest_score = ScoreRepository.get_latest_by_brand(session, own_brand.id)
-        avg_scores = ScoreRepository.get_average_scores(session, own_brand.id, days=30)
+    class DemoScore:
+        def __init__(self):
+            self.total_score = 72
+            self.visibility = 8
+            self.sentiment = 15
+            self.positioning = 12
+            self.accuracy = 37
 
-        # ================================
-        # KPIカード セクション
-        # ================================
+    own_brand = DemoBrand(1, "HubSpot", is_own=True)
+    competitors = [
+        DemoBrand(2, "Marketo"),
+        DemoBrand(3, "Salesforce"),
+        DemoBrand(4, "Pardot")
+    ]
+    latest_score = DemoScore()
+    avg_scores = {
+        'visibility': 7.5,
+        'sentiment': 14.2,
+        'positioning': 11.8,
+        'accuracy': 35.5,
+        'total': 69.0
+    }
+else:
+    # 本番モード: データベースから取得
+    with db.get_session() as session:
+        own_brand = BrandRepository.get_own_brand(session)
+        competitors = BrandRepository.get_competitors(session)
+
+        if own_brand:
+            # 自社の最新スコアと平均
+            latest_score = ScoreRepository.get_latest_by_brand(session, own_brand.id)
+            avg_scores = ScoreRepository.get_average_scores(session, own_brand.id, days=30)
+        else:
+            latest_score = None
+            avg_scores = None
+
+# データの表示
+if own_brand and latest_score and avg_scores:
+    # ================================
+    # KPIカード セクション
+    # ================================
         st.markdown(f"""
         <div style="margin-bottom: 0.75rem;">
             <span style="

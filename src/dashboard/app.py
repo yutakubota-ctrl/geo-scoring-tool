@@ -117,7 +117,6 @@ st.markdown(f"""
     position: relative;
     overflow: hidden;
 ">
-    <!-- グローエフェクト -->
     <div style="
         position: absolute;
         right: -100px;
